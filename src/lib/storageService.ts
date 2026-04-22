@@ -8,52 +8,7 @@ export interface UploadResult {
   success: boolean;
   publicUrl?: string;
   error?: string;
-  isConfigError?: boolean; // Indica erro de configuração (bucket não existe)
 }
-
-/**
- * Verifica se o bucket existe e está acessível
- */
-export const checkBucketExists = async (): Promise<{ exists: boolean; error?: string }> => {
-  try {
-    const { data, error } = await supabase.storage.listBuckets();
-    
-    if (error) {
-      // Erro ao listar buckets (possível permissão insuficiente ou timeout)
-      console.warn("Error listing buckets:", error);
-      return {
-        exists: false,
-        error: `Não foi possível verificar o bucket. Execute o SQL em setup-database-complete.sql no Supabase.`,
-      };
-    }
-
-    const bucketExists = data?.some((bucket) => bucket.name === BUCKET_NAME);
-    
-    if (!bucketExists) {
-      return {
-        exists: false,
-        error: `❌ Bucket '${BUCKET_NAME}' não existe no Supabase Storage.\n\n📋 AÇÃO NECESSÁRIA:\n1. Abra o arquivo 'setup-database-complete.sql'\n2. Copie TODO o conteúdo\n3. Vá em console.supabase.com → SQL Editor → New Query\n4. Cole o SQL e clique em Run\n\n✅ Após isso, retorne e tente fazer o upload novamente.`,
-      };
-    }
-
-    return { exists: true };
-  } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : "Erro desconhecido ao verificar bucket";
-    return {
-      exists: false,
-      error: `Erro inesperado ao verificar bucket: ${errorMessage}`,
-    };
-  }
-};
-      };
-    }
-
-    return { exists: true };
-  } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : "Erro ao verificar bucket";
-    return { exists: false, error: errorMessage };
-  }
-};
 
 /**
  * Valida o arquivo antes do upload
@@ -86,72 +41,40 @@ export const uploadToStorage = async (file: File, folder: "logos" | "favicons"):
       return { success: false, error: validation.error };
     }
 
-    // Verificar se bucket existe
-    const bucketCheck = await checkBucketExists();
-    if (!bucketCheck.exists) {
-      return {
-        success: false,
-        error: bucketCheck.error || `Bucket '${BUCKET_NAME}' não configurado`,
-        isConfigError: true,
-      };
-    }
-
     // Gerar nome único para o arquivo
     const timestamp = Date.now();
     const randomStr = Math.random().toString(36).substring(2, 10);
     const fileExt = file.name.split(".").pop()?.toLowerCase() || "png";
     const fileName = `${folder}/${timestamp}-${randomStr}.${fileExt}`;
 
-    // Fazer upload do arquivo
+    console.log(`[Storage] Iniciando upload: ${fileName} no bucket ${BUCKET_NAME}`);
+
+    // Fazer upload do arquivo diretamente (sem verificação de cache de bucket)
     const { data, error } = await supabase.storage.from(BUCKET_NAME).upload(fileName, file, {
-      cacheControl: "3600",
-      upsert: true, // Substitui se o arquivo já existe (improvável com nome único)
+      cacheControl: "0", // Forçar sem cache para evitar problemas de cache
+      upsert: true,
     });
 
     if (error) {
-      console.error("Upload error:", error);
-
-      // Tratamento específico para erros de bucket
-      if (error.message?.includes("not found") || error.message?.includes("404")) {
-        return {
-          success: false,
-          error: `Bucket '${BUCKET_NAME}' não encontrado. Configure o Supabase Storage conforme SETUP_STORAGE.md`,
-          isConfigError: true,
-        };
-      }
-
-      if (error.message?.includes("Unauthorized") || error.message?.includes("403")) {
-        return {
-          success: false,
-          error: "Sem permissão para fazer upload. Verifique as políticas de RLS do bucket.",
-          isConfigError: true,
-        };
-      }
-
+      console.error(`[Storage] Erro no upload: ${error.message}`, error);
       return { success: false, error: `Erro ao fazer upload: ${error.message}` };
     }
 
-    // Obter URL pública
+    console.log(`[Storage] Upload concluído: ${data.path}`);
+
+    // Gerar URL pública do arquivo
     const { data: urlData } = supabase.storage.from(BUCKET_NAME).getPublicUrl(data.path);
 
     if (!urlData?.publicUrl) {
+      console.error(`[Storage] Falha ao gerar URL pública para: ${data.path}`);
       return { success: false, error: "Erro ao gerar URL pública" };
     }
 
+    console.log(`[Storage] URL pública gerada: ${urlData.publicUrl}`);
     return { success: true, publicUrl: urlData.publicUrl };
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : "Erro desconhecido no upload";
-    console.error("Upload exception:", err);
-
-    // Detectar erros de configuração/bucket
-    if (errorMessage.includes("not found") || errorMessage.includes("404")) {
-      return {
-        success: false,
-        error: `Bucket '${BUCKET_NAME}' não encontrado. Execute a configuração do Supabase Storage.`,
-        isConfigError: true,
-      };
-    }
-
+    console.error(`[Storage] Exceção no upload:`, err);
     return { success: false, error: errorMessage };
   }
 };

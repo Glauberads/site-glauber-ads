@@ -2,15 +2,18 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/ui/file-upload";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { uploadToStorage } from "@/lib/storageService";
 import { toast } from "sonner";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Phone } from "lucide-react";
 
 const Personalization = () => {
-  const { settings, save, reload } = useSiteSettings();
+  const { settings, save: saveSettings } = useSiteSettings();
   const [logoUrl, setLogoUrl] = useState<string>("");
   const [faviconUrl, setFaviconUrl] = useState<string>("");
+  const [whatsappNumber, setWhatsappNumber] = useState<string>("");
   const [logoLoading, setLogoLoading] = useState(false);
   const [faviconLoading, setFaviconLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -19,6 +22,7 @@ const Personalization = () => {
   useEffect(() => {
     setLogoUrl(settings?.logo_url ?? "");
     setFaviconUrl(settings?.favicon_url ?? "");
+    setWhatsappNumber(settings?.whatsapp_number ?? "");
   }, [settings]);
 
   const handleLogoUpload = async (file: File) => {
@@ -30,11 +34,7 @@ const Personalization = () => {
         setUploadedFiles((prev) => ({ ...prev, logo: true }));
         toast.success("Logo enviada com sucesso!");
       } else {
-        const message = result.isConfigError
-          ? `${result.error}\n\nAbra SETUP_STORAGE.md para configurar o Supabase Storage.`
-          : result.error || "Erro ao fazer upload da logo";
-        
-        toast.error(message, { duration: 6000 });
+        toast.error(result.error || "Erro ao fazer upload da logo", { duration: 6000 });
       }
     } finally {
       setLogoLoading(false);
@@ -50,11 +50,7 @@ const Personalization = () => {
         setUploadedFiles((prev) => ({ ...prev, favicon: true }));
         toast.success("Favicon enviado com sucesso!");
       } else {
-        const message = result.isConfigError
-          ? `${result.error}\n\nAbra SETUP_STORAGE.md para configurar o Supabase Storage.`
-          : result.error || "Erro ao fazer upload do favicon";
-        
-        toast.error(message, { duration: 6000 });
+        toast.error(result.error || "Erro ao fazer upload do favicon", { duration: 6000 });
       }
     } finally {
       setFaviconLoading(false);
@@ -71,32 +67,22 @@ const Personalization = () => {
     setUploadedFiles((prev) => ({ ...prev, favicon: false }));
   };
 
-  const onSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!logoUrl && !faviconUrl) {
-      toast.error("Selecione pelo menos uma imagem");
-      return;
-    }
-
-    setSaving(true);
+  const onSave = async () => {
     try {
-      const ok = await save({
-        logo_url: logoUrl || null,
-        favicon_url: faviconUrl || null,
-      });
+      setSaving(true);
 
-      if (ok) {
-        toast.success("Configurações salvas com sucesso!", {
-          icon: <CheckCircle2 className="h-5 w-5 text-green-500" />,
-        });
-        setUploadedFiles({ logo: false, favicon: false });
-        reload();
-      } else {
-        toast.error("Erro ao salvar configurações", {
-          icon: <AlertCircle className="h-5 w-5 text-red-500" />,
-        });
-      }
+      // Save logo and favicon URLs
+      const updatedSettings = {
+        logo_url: logoUrl,
+        favicon_url: faviconUrl,
+        whatsapp_number: whatsappNumber, // Include WhatsApp number
+      };
+
+      await saveSettings(updatedSettings);
+      toast.success("Configurações salvas com sucesso!");
+    } catch (error) {
+      console.error("Erro ao salvar configurações:", error);
+      toast.error("Erro ao salvar configurações. Tente novamente.");
     } finally {
       setSaving(false);
     }
@@ -149,6 +135,23 @@ const Personalization = () => {
                   <span className="inline-block w-2 h-2 rounded-full bg-green-500" /> URL do favicon carregada
                 </p>
               )}
+            </div>
+
+            {/* WhatsApp Number */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Phone className="h-4 w-4" />
+                Número do WhatsApp
+              </Label>
+              <Input
+                value={whatsappNumber}
+                onChange={(e) => setWhatsappNumber(e.target.value)}
+                placeholder="11 99999-9999"
+                type="tel"
+              />
+              <p className="text-xs text-muted-foreground">
+                Número usado para redirecionamento após captura de leads
+              </p>
             </div>
 
             {/* Info Box */}

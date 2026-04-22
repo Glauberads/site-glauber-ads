@@ -5,6 +5,26 @@ type SiteSettings = {
   id?: string;
   logo_url?: string | null;
   favicon_url?: string | null;
+  whatsapp_number?: string | null;
+};
+
+/**
+ * Update favicon dynamically
+ */
+const updateFavicon = (faviconUrl: string | null) => {
+  if (typeof window === "undefined") return;
+
+  let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+  if (!link) {
+    link = document.createElement("link");
+    link.rel = "icon";
+    link.type = "image/png";
+    document.head.appendChild(link);
+  }
+
+  // Use dynamic favicon or fallback to static
+  link.href = faviconUrl || "/favicon.png";
+  console.log("🔄 Favicon updated:", faviconUrl || "/favicon.png");
 };
 
 export const useSiteSettings = () => {
@@ -18,31 +38,23 @@ export const useSiteSettings = () => {
       if (error?.code === "PGRST116" || error?.message?.includes("not found")) {
         console.warn("site_settings table not found. Using fallback defaults.");
         setSettings({ logo_url: null, favicon_url: null });
+        updateFavicon(null);
         return;
       }
 
       if (error) {
         console.error("Error fetching site_settings:", error.message);
         setSettings(null);
+        updateFavicon(null);
         return;
       }
 
       setSettings(data ?? null);
-
-      // update favicon dynamically if available
-      if (data?.favicon_url && typeof window !== "undefined") {
-        const href = data.favicon_url;
-        let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
-        if (!link) {
-          link = document.createElement("link");
-          link.rel = "icon";
-          document.head.appendChild(link);
-        }
-        link.href = href;
-      }
+      updateFavicon(data?.favicon_url);
     } catch (err) {
       console.error("Error fetching site_settings:", err);
       setSettings(null);
+      updateFavicon(null);
     }
   };
 
