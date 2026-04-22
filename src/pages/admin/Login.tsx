@@ -52,10 +52,10 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <Card className="w-full max-w-md border-border/60 bg-card/80 backdrop-blur-xl glow-green">
+      <Card className="w-full max-w-md border-border/60 bg-card/80 backdrop-blur-xl glow-orange">
         <CardHeader className="space-y-3 text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-md border border-primary/40 bg-primary/10">
-            <ShieldCheck className="h-6 w-6 text-primary text-glow-green" />
+            <ShieldCheck className="h-6 w-6 text-primary text-glow-orange" />
           </div>
           <CardTitle className="text-2xl tracking-tight">Glauber Ads · Admin</CardTitle>
           <CardDescription>Acesso restrito ao painel de operações</CardDescription>
@@ -70,7 +70,7 @@ const Login = () => {
               <Label htmlFor="password">Senha</Label>
               <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === "login" ? "current-password" : "new-password"} />
             </div>
-            <Button type="submit" className="w-full glow-green" disabled={loading}>
+            <Button type="submit" className="w-full glow-orange" disabled={loading}>
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               {mode === "login" ? "Entrar" : "Criar conta"}
             </Button>

@@ -101,7 +101,7 @@ All colors MUST be HSL.
     --card-foreground: 150 30% 96%;
     --popover: 0 0% 7%;
     --popover-foreground: 150 30% 96%;
-    --primary: 142 90% 55%;
+    --primary: 21 100% 50%;
     --primary-foreground: 0 0% 4%;
     --secondary: 0 0% 10%;
     --secondary-foreground: 150 30% 96%;
@@ -113,17 +113,18 @@ All colors MUST be HSL.
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 14%;
     --input: 0 0% 14%;
-    --ring: 142 90% 55%;
+    --ring: 21 100% 50%;
+    --neon-orange: 21 100% 50%;
     --neon-green: 142 90% 55%;
     --neon-blue: 200 100% 55%;
     --sidebar-background: 0 0% 5%;
     --sidebar-foreground: 150 20% 92%;
-    --sidebar-primary: 142 90% 55%;
+    --sidebar-primary: 21 100% 50%;
     --sidebar-primary-foreground: 0 0% 4%;
     --sidebar-accent: 0 0% 10%;
     --sidebar-accent-foreground: 150 30% 96%;
     --sidebar-border: 0 0% 12%;
-    --sidebar-ring: 142 90% 55%;
+    --sidebar-ring: 21 100% 50%;
   }
 }
 
@@ -138,10 +139,13 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
+  .text-neon-orange { color: hsl(var(--neon-orange, 21 100% 50%)); }
   .text-neon-green { color: hsl(var(--neon-green, 142 90% 55%)); }
   .text-neon-blue { color: hsl(var(--neon-blue, 200 100% 55%)); }
+  .glow-orange { box-shadow: 0 0 24px -4px hsl(var(--neon-orange, 21 100% 50%) / 0.55); }
   .glow-green { box-shadow: 0 0 24px -4px hsl(var(--neon-green, 142 90% 55%) / 0.55); }
   .glow-blue { box-shadow: 0 0 24px -4px hsl(var(--neon-blue, 200 100% 55%) / 0.55); }
+  .text-glow-orange { text-shadow: 0 0 14px hsl(var(--neon-orange, 21 100% 50%) / 0.6); }
   .text-glow-green { text-shadow: 0 0 14px hsl(var(--neon-green, 142 90% 55%) / 0.6); }
   .text-glow-blue { text-shadow: 0 0 14px hsl(var(--neon-blue, 200 100% 55%) / 0.6); }
 }
