@@ -104,7 +104,7 @@ const Integrations = () => {
               <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." />
             </div>
             <div className="flex items-end">
-              <Button type="submit" className="gap-2 glow-green"><Plus className="h-4 w-4" />Adicionar</Button>
+              <Button type="submit" className="gap-2 glow-orange"><Plus className="h-4 w-4" />Adicionar</Button>
             </div>
           </form>
         </CardContent>
@@ -140,7 +140,7 @@ const Integrations = () => {
                 <div key={l.id} className="flex justify-between border-b border-border/40 py-1.5">
                   <span className="text-muted-foreground">{new Date(l.created_at).toLocaleString("pt-BR")}</span>
                   <span>{l.method}</span>
-                  <span className={l.status_code && l.status_code < 400 ? "text-neon-green" : "text-destructive"}>{l.status_code ?? "—"}</span>
+                  <span className={l.status_code && l.status_code < 400 ? "text-neon-orange" : "text-destructive"}>{l.status_code ?? "—"}</span>
                 </div>
               ))}
             </div>

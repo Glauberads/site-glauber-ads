@@ -29,7 +29,7 @@ export const AdminSidebar = () => {
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2 px-2 py-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md border border-primary/40 bg-primary/10 glow-green">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md border border-primary/40 bg-primary/10 glow-orange">
             <BarChart3 className="h-4 w-4 text-primary" />
           </div>
           <div className="flex flex-col">

@@ -52,13 +52,13 @@ const Dashboard = () => {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="border-border/60 bg-card/70 glow-green">
+        <Card className="border-border/60 bg-card/70 glow-orange">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm text-muted-foreground">Número de Leads</CardTitle>
             <Users className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold text-neon-green text-glow-green tabular-nums">
+            <p className="text-4xl font-bold text-neon-orange text-glow-orange tabular-nums">
               <CountUp to={total} />
             </p>
           </CardContent>
@@ -80,7 +80,7 @@ const Dashboard = () => {
             <Zap className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold text-neon-green text-glow-green tabular-nums">
+            <p className="text-4xl font-bold text-neon-orange text-glow-orange tabular-nums">
               <CountUp to={last7.reduce((s, d) => s + d.total, 0)} />
             </p>
           </CardContent>
@@ -98,7 +98,7 @@ const Dashboard = () => {
               <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} allowDecimals={false} />
               <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
-              <Line type="monotone" dataKey="total" stroke="hsl(var(--neon-green))" strokeWidth={2.5} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+              <Line type="monotone" dataKey="total" stroke="hsl(var(--neon-orange))" strokeWidth={2.5} dot={{ r: 3 }} activeDot={{ r: 5 }} />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>

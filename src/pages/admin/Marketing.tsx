@@ -58,7 +58,7 @@ const Marketing = () => {
           <h1 className="text-2xl font-semibold tracking-tight">Marketing & Tracking</h1>
           <p className="text-sm text-muted-foreground">Pixels e scripts são injetados automaticamente na landing page.</p>
         </div>
-        <Button onClick={save} disabled={saving} className="gap-2 glow-green">
+        <Button onClick={save} disabled={saving} className="gap-2 glow-orange">
           <Save className="h-4 w-4" /> Salvar
         </Button>
       </div>

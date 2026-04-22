@@ -67,7 +67,7 @@ const Leads = () => {
           <h1 className="text-2xl font-semibold tracking-tight">Gestão de Leads</h1>
           <p className="text-sm text-muted-foreground">Todos os leads capturados pela landing page.</p>
         </div>
-        <Button onClick={exportCsv} className="gap-2 glow-green">
+        <Button onClick={exportCsv} className="gap-2 glow-orange">
           <Download className="h-4 w-4" />
           Exportar CSV
         </Button>
