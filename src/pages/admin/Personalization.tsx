@@ -30,7 +30,11 @@ const Personalization = () => {
         setUploadedFiles((prev) => ({ ...prev, logo: true }));
         toast.success("Logo enviada com sucesso!");
       } else {
-        toast.error(result.error || "Erro ao fazer upload da logo");
+        const message = result.isConfigError
+          ? `${result.error}\n\nAbra SETUP_STORAGE.md para configurar o Supabase Storage.`
+          : result.error || "Erro ao fazer upload da logo";
+        
+        toast.error(message, { duration: 6000 });
       }
     } finally {
       setLogoLoading(false);
@@ -46,7 +50,11 @@ const Personalization = () => {
         setUploadedFiles((prev) => ({ ...prev, favicon: true }));
         toast.success("Favicon enviado com sucesso!");
       } else {
-        toast.error(result.error || "Erro ao fazer upload do favicon");
+        const message = result.isConfigError
+          ? `${result.error}\n\nAbra SETUP_STORAGE.md para configurar o Supabase Storage.`
+          : result.error || "Erro ao fazer upload do favicon";
+        
+        toast.error(message, { duration: 6000 });
       }
     } finally {
       setFaviconLoading(false);

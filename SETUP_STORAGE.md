@@ -12,14 +12,29 @@ Configurar o bucket `site-assets` no Supabase Storage para permitir upload de im
 
 ---
 
-## 🚀 Passo 1: Criar o Bucket
+## ⚡ Quick Setup (Recomendado)
 
-### No Supabase Console:
+### Opção 1: Usar SQL Script (Mais Rápido)
+
+1. Abra [console.supabase.com](https://console.supabase.com) → Seu Projeto
+2. Vá em **SQL Editor** → **New Query**
+3. Abra o arquivo `setup-storage.sql` deste projeto
+4. Copie TODO o conteúdo do arquivo
+5. Cole no editor SQL do Supabase
+6. Clique em **Run** (ou Ctrl + Enter)
+7. Pronto! ✅
+
+---
+
+## 🚀 Passo 1: Criar o Bucket (Manual)
+
+### Se preferir fazer manualmente:
+
 1. Acesse **Storage** na sidebar esquerda
 2. Clique em **Create a new bucket**
 3. Preencha:
    - **Bucket name**: `site-assets`
-   - **Public bucket**: ❌ **Deixe DESMARCADO** (configuraremos manualmente as políticas)
+   - **Public bucket**: ✅ **Marque como PÚBLICO**
    - **File size limit**: 5 MB (opcional, nosso código já valida 5MB)
 4. Clique em **Create bucket**
 
@@ -27,78 +42,74 @@ Configurar o bucket `site-assets` no Supabase Storage para permitir upload de im
 
 ## 🔐 Passo 2: Configurar Políticas de Segurança (RLS)
 
-O bucket foi criado, mas agora precisamos configurar as políticas para:
-- ✅ Usuários autenticados (admin) podem fazer **upload** (INSERT)
-- ✅ Qualquer pessoa pode **ler** as imagens (SELECT) - para exibir no site
-- ❌ Usuários não podem **deletar** (para evitar danos)
+### Via SQL Script (Recomendado):
 
-### Na aba "Policies" do bucket `site-assets`:
+Copie e execute o conteúdo de `setup-storage.sql` no SQL Editor do Supabase.
 
-#### Política 1: Permitir UPLOAD (INSERT) para admin autenticado
+### Manual via UI (Alternativo):
 
-1. Clique em **New Policy** → **Create a policy from a template**
-2. Selecione: **Enable insert access based on user ID**
-3. Configure:
-   ```
-   - Policy Name: "Allow authenticated users to upload"
-   - Allowed operation: INSERT
-   - Target roles: authenticated
-   - Using expression: (auth.role() = 'authenticated'::text)
-   - With check: (auth.role() = 'authenticated'::text)
-   ```
-4. Clique em **Review** → **Save policy**
+Na aba **Policies** do bucket `site-assets`:
 
-**Ou via SQL (alternativo):**
+#### ✅ Política 1: Permitir LEITURA (SELECT) - Pública
+
 ```sql
-CREATE POLICY "Allow authenticated users to upload"
+CREATE POLICY "Allow public read access to site-assets"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'site-assets');
+```
+
+#### ✅ Política 2: Permitir UPLOAD (INSERT) - Apenas Autenticado
+
+```sql
+CREATE POLICY "Allow authenticated users to upload to site-assets"
 ON storage.objects FOR INSERT TO authenticated
 WITH CHECK (bucket_id = 'site-assets');
 ```
 
-#### Política 2: Permitir LEITURA (SELECT) para público
+#### ✅ Política 3: Permitir UPDATE - Apenas Autenticado
 
-1. Clique em **New Policy** → **Create a policy from a template**
-2. Selecione: **Enable read access to everyone**
-3. Configure:
-   ```
-   - Policy Name: "Allow public read access"
-   - Allowed operation: SELECT
-   - Target roles: public (ou deixar em branco para todos)
-   - Using expression: (bucket_id = 'site-assets')
-   ```
-4. Clique em **Review** → **Save policy**
-
-**Ou via SQL (alternativo):**
 ```sql
-CREATE POLICY "Allow public read access"
-ON storage.objects FOR SELECT
+CREATE POLICY "Allow authenticated users to update site-assets"
+ON storage.objects FOR UPDATE TO authenticated
+USING (bucket_id = 'site-assets')
+WITH CHECK (bucket_id = 'site-assets');
+```
+
+#### ✅ Política 4: Permitir DELETE - Apenas Autenticado
+
+```sql
+CREATE POLICY "Allow authenticated users to delete from site-assets"
+ON storage.objects FOR DELETE TO authenticated
 USING (bucket_id = 'site-assets');
 ```
 
 ---
 
-## 📝 Passo 3: Verificar Configuração
+## ✅ Verificação de Configuração
 
-Após criar as políticas, você deve ver no Supabase:
+Após executar o SQL, você deve ver:
 
 ```
 Bucket: site-assets
+├── Status: Public ✅
 ├── Policies:
-│   ├── Allow authenticated users to upload (INSERT)
-│   └── Allow public read access (SELECT)
-└── Public: No (apenas via políticas)
+│   ├── Allow public read access
+│   ├── Allow authenticated users to upload
+│   ├── Allow authenticated users to update
+│   └── Allow authenticated users to delete
+└── Storage Status: Ready ✅
 ```
 
----
+Para verificar, rode esta query SQL:
 
-## ✅ Passo 4: Testar Upload Manual (Opcional)
+```sql
+SELECT id, name, public FROM storage.buckets WHERE id = 'site-assets';
+```
 
-1. Vá até o bucket `site-assets` no console Supabase
-2. Clique em **Upload file**
-3. Selecione uma imagem (PNG, JPG, etc.)
-4. Confirme upload
-5. Clique no arquivo e copie a **Public URL**
-6. Cole em um navegador - a imagem deve carregar normalmente
+Esperado:
+| id | name | public |
+|----|------|--------|
+| site-assets | site-assets | true |
 
 ---
 
@@ -127,16 +138,22 @@ Bucket: site-assets
 ## 🔗 Fluxo Técnico Completo
 
 ```
-Usuário Admin
+Usuário Admin clica em Upload
     ↓
-[Upload via FileUpload Component]
+[FileUpload Component]
+    ├─ Validação: tipo, tamanho (cliente)
+    ├─ Drag & Drop suportado
+    └─ Preview em tempo real
     ↓
 uploadToStorage() → Supabase Storage
-    ├─ Validação (tipo, tamanho)
+    ├─ checkBucketExists() valida bucket
     ├─ Gera nome único (timestamp + random)
     ├─ Upload para site-assets/logos/ ou /favicons/
-    ├─ Obtém URL pública via getPublicUrl()
-    └─ Retorna URL
+    ├─ Obtém URL pública
+    └─ Error Handling aprimorado:
+       ├─ "Bucket not found" → Mensagem clara
+       ├─ "Unauthorized" → Erro de permissão
+       └─ Outros → Erro genérico
     ↓
 [FileUpload mostra preview da URL]
     ↓
@@ -179,47 +196,72 @@ Cada arquivo tem nome único (timestamp + string aleatória) para evitar conflit
 - Apenas usuários autenticados (admin) podem fazer upload
 - Qualquer pessoa pode ler as imagens públicas (necessário para site funcionar)
 - Validação no cliente: tipo de arquivo, tamanho máximo
+- Validação no servidor: bucket existe, permissões RLS
 - Nomes únicos impedem sobrescrita intencional
 
 ### ⚠️ Considerações:
-- Usuários admin não podem deletar via UI (política não permite DELETE)
-- Se precisar deletar, faça manualmente no Supabase console
-- Para ambiente produção, considere adicionar rate limiting no backend
+- Usuários admin podem deletar via DELETE policy
+- Se precisar remover essa permissão, comente a política DELETE no `setup-storage.sql`
+- Para ambiente produção, considere adicionar rate limiting
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Erro: "Access denied" ao fazer upload
-- ✅ Verifique se a política de INSERT está criada
-- ✅ Verifique se o usuário está autenticado
-- ✅ Verifique `VITE_SUPABASE_ANON_KEY` nas variáveis de ambiente
+### Erro: "Bucket 'site-assets' not found"
 
-### Erro: "Bucket not found"
-- ✅ Verifique se o bucket foi criado com nome `site-assets` (case-sensitive)
-- ✅ Verifique se o projeto Supabase está correto
+**Solução:**
+1. ✅ Execute o `setup-storage.sql` no Supabase SQL Editor
+2. ✅ Verifique se o bucket foi criado em **Storage** → **Buckets**
+3. ✅ Verifique se o nome é exatamente `site-assets` (case-sensitive)
+
+### Erro: "Unauthorized" ou "Forbidden"
+
+**Solução:**
+1. ✅ Verifique se o usuário está autenticado (admin logado)
+2. ✅ Execute todas as 4 políticas de RLS do `setup-storage.sql`
+3. ✅ Confirme que a política INSERT está criada para `authenticated`
+
+### Erro: "Access denied" ao fazer upload
+
+**Solução:**
+1. ✅ Verifique `VITE_SUPABASE_ANON_KEY` nos .env.local (deve estar correto)
+2. ✅ Verifique se o usuário está no grupo `authenticated` (deve ter JWT)
+3. ✅ Rode novamente: `SELECT * FROM auth.users WHERE id = 'seu-user-id'`
 
 ### Imagem não aparece após upload
-- ✅ Verifique se a política de SELECT está criada
-- ✅ Verifique se a URL pública foi gerada corretamente
-- ✅ Teste a URL diretamente no navegador
+
+**Solução:**
+1. ✅ Verifique se a URL foi copiada corretamente
+2. ✅ Teste a URL diretamente no navegador (deve carregar a imagem)
+3. ✅ Verifique a política SELECT (deve permitir public read)
 
 ### "File too large" ou "Invalid file type"
-- ✅ Confirmado: máximo 5MB e formatos: PNG, JPG, WEBP, SVG
-- ✅ Código valida no cliente (veja `validateFile()` em `src/lib/storageService.ts`)
+
+**Solução:**
+- ✅ Máximo: 5MB
+- ✅ Formatos: PNG, JPG, WEBP, SVG
+- ✅ Validação acontece no cliente e no servidor
+
+---
+
+## 📂 Arquivos Relacionados
+
+- `src/lib/storageService.ts` - Utilitários de upload com error handling
+- `src/components/ui/file-upload.tsx` - Componente de upload (UI)
+- `src/pages/admin/Personalization.tsx` - Página de settings
+- `src/hooks/useSiteSettings.ts` - Hook para persistência de URLs
+- `setup-storage.sql` - SQL script para setup completo
 
 ---
 
 ## 🚀 Próximas Etapas
 
-1. Criar bucket e políticas (este documento)
-2. ✅ Código já implementado:
-   - `uploadToStorage()` em `src/lib/storageService.ts`
-   - `FileUpload` component em `src/components/ui/file-upload.tsx`
-   - `Personalization.tsx` com novo UI
-3. Deploy para Vercel (seu `npm run deploy`)
-4. Testar upload na aba Admin → Personalização
-5. Verificar se logo/favicon aparecem dinamicamente
+1. ✅ Execute `setup-storage.sql` no Supabase Console
+2. ✅ Verifique bucket em **Storage** → **site-assets**
+3. ✅ Teste upload na aba Admin → Personalização
+4. ✅ Verifique se logo/favicon aparecem dinamicamente
+5. ✅ Deploy para Vercel (`npm run deploy`)
 
 ---
 
@@ -233,4 +275,6 @@ Cada arquivo tem nome único (timestamp + string aleatória) para evitar conflit
 
 **Data**: 22 de Abril de 2026  
 **Projeto**: Glauber Ads - Site + Admin Dashboard  
-**Status**: ✅ Pronto para Setup no Supabase
+**Status**: ✅ Pronto para Setup no Supabase  
+**Última Atualização**: Adicionado SQL script e error handling aprimorado
+
