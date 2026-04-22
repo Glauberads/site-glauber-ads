@@ -19,7 +19,12 @@ export const checkBucketExists = async (): Promise<{ exists: boolean; error?: st
     const { data, error } = await supabase.storage.listBuckets();
     
     if (error) {
-      return { exists: false, error: `Erro ao listar buckets: ${error.message}` };
+      // Erro ao listar buckets (possível permissão insuficiente ou timeout)
+      console.warn("Error listing buckets:", error);
+      return {
+        exists: false,
+        error: `Não foi possível verificar o bucket. Execute o SQL em setup-database-complete.sql no Supabase.`,
+      };
     }
 
     const bucketExists = data?.some((bucket) => bucket.name === BUCKET_NAME);
@@ -27,7 +32,19 @@ export const checkBucketExists = async (): Promise<{ exists: boolean; error?: st
     if (!bucketExists) {
       return {
         exists: false,
-        error: `Bucket '${BUCKET_NAME}' não encontrado. Por favor, configure o Supabase Storage seguindo a documentação SETUP_STORAGE.md`,
+        error: `❌ Bucket '${BUCKET_NAME}' não existe no Supabase Storage.\n\n📋 AÇÃO NECESSÁRIA:\n1. Abra o arquivo 'setup-database-complete.sql'\n2. Copie TODO o conteúdo\n3. Vá em console.supabase.com → SQL Editor → New Query\n4. Cole o SQL e clique em Run\n\n✅ Após isso, retorne e tente fazer o upload novamente.`,
+      };
+    }
+
+    return { exists: true };
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : "Erro desconhecido ao verificar bucket";
+    return {
+      exists: false,
+      error: `Erro inesperado ao verificar bucket: ${errorMessage}`,
+    };
+  }
+};
       };
     }
 

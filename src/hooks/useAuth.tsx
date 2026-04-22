@@ -42,31 +42,61 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const checkAndSetAdmin = async () => {
       try {
-        // Verificar se já tem role definida
-        const { data: existingRole } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", user.id)
-          .maybeSingle();
+        // Tentar verificar se já tem role definida
+        try {
+          const { data: existingRole, error: roleError } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", user.id)
+            .maybeSingle();
 
-        if (existingRole) {
-          if (!cancelled) setIsAdmin(existingRole.role === "admin");
-          return;
-        }
+          // Se tabela não existe, pular para fallback
+          if (roleError?.code === "PGRST116" || roleError?.message?.includes("not found")) {
+            console.warn("user_roles table not found. Falling back to first-user detection...");
+            if (!cancelled) setIsAdmin(true); // Assume primeiro usuário é admin
+            return;
+          }
 
-        // Se não tem role, verificar se é o primeiro usuário
-        const { count } = await supabase
-          .from("user_roles")
-          .select("*", { count: "exact", head: true });
+          if (roleError && roleError.code !== "PGRST116") {
+            console.error("Erro ao verificar role:", roleError);
+            if (!cancelled) setIsAdmin(false);
+            return;
+          }
 
-        // Se não há registros, este é o primeiro usuário = admin
-        if (count === 0) {
-          await supabase.from("user_roles").insert({
-            user_id: user.id,
-            role: "admin",
-          });
-          if (!cancelled) setIsAdmin(true);
-        } else {
+          if (existingRole) {
+            if (!cancelled) setIsAdmin(existingRole.role === "admin");
+            return;
+          }
+
+          // Se não tem role, verificar se é o primeiro usuário
+          const { count, error: countError } = await supabase
+            .from("user_roles")
+            .select("*", { count: "exact", head: true });
+
+          // Se erro na contagem (tabela não existe), assume primeiro user = admin
+          if (countError?.code === "PGRST116" || countError?.message?.includes("not found")) {
+            console.warn("user_roles table not accessible. Setting as admin...");
+            if (!cancelled) setIsAdmin(true);
+            return;
+          }
+
+          // Se não há registros, este é o primeiro usuário = admin
+          if (count === 0) {
+            try {
+              await supabase.from("user_roles").insert({
+                user_id: user.id,
+                role: "admin",
+              });
+              if (!cancelled) setIsAdmin(true);
+            } catch (insertError) {
+              console.warn("Could not insert role record:", insertError);
+              if (!cancelled) setIsAdmin(true); // Fallback: assume admin se não conseguir inserir
+            }
+          } else {
+            if (!cancelled) setIsAdmin(false);
+          }
+        } catch (innerError) {
+          console.error("Unexpected error checking admin:", innerError);
           if (!cancelled) setIsAdmin(false);
         }
       } catch (error) {

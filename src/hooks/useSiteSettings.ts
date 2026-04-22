@@ -13,10 +13,20 @@ export const useSiteSettings = () => {
   const fetchSettings = async () => {
     try {
       const { data, error } = await supabase.from("site_settings").select("*").maybeSingle();
-      if (error) {
-        console.error("Error fetching site_settings:", error.message);
+      
+      // Se tabela não existe, cria dados vazios (fallback)
+      if (error?.code === "PGRST116" || error?.message?.includes("not found")) {
+        console.warn("site_settings table not found. Using fallback defaults.");
+        setSettings({ logo_url: null, favicon_url: null });
         return;
       }
+
+      if (error) {
+        console.error("Error fetching site_settings:", error.message);
+        setSettings(null);
+        return;
+      }
+
       setSettings(data ?? null);
 
       // update favicon dynamically if available
@@ -31,7 +41,8 @@ export const useSiteSettings = () => {
         link.href = href;
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching site_settings:", err);
+      setSettings(null);
     }
   };
 
