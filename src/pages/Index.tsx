@@ -317,8 +317,8 @@ const Index = () => {
       <MarketingScripts />
       <div className="fixed inset-x-0 top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="Logo da Glauber Ads" className="h-10 w-10 object-contain" loading="eager" />
+          <div className="flex items-center gap-4">
+            <img src={logo} alt="Logo da Glauber Ads" className="h-12 w-12 object-contain" loading="eager" />
             <div>
               <p className="text-lg font-semibold">Glauber Ads</p>
               <p className="text-xs text-muted-foreground">Growth, performance e inteligência comercial</p>
