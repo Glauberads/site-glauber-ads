@@ -1,4 +1,4 @@
-import { BarChart3, LayoutDashboard, LogOut, Megaphone, Users, Webhook } from "lucide-react";
+import { BarChart3, LayoutDashboard, LogOut, Megaphone, Users, Webhook, Palette } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
@@ -13,6 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { Button } from "@/components/ui/button";
 
 const items = [
@@ -20,17 +21,23 @@ const items = [
   { title: "Gestão de Leads", url: "/admin/leads", icon: Users, end: false },
   { title: "Integrações", url: "/admin/integrations", icon: Webhook, end: false },
   { title: "Marketing & Tracking", url: "/admin/marketing", icon: Megaphone, end: false },
+  { title: "Personalização", url: "/admin/personalizacao", icon: Palette, end: false },
 ];
 
 export const AdminSidebar = () => {
   const { signOut, user } = useAuth();
+  const { settings } = useSiteSettings();
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2 px-2 py-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md border border-primary/40 bg-primary/10 glow-orange">
-            <BarChart3 className="h-4 w-4 text-primary" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-md border border-primary/40 bg-primary/10 glow-orange overflow-hidden">
+            {settings?.logo_url ? (
+              <img src={settings.logo_url} alt="Glauber Ads" className="h-8 w-8 object-contain" />
+            ) : (
+              <BarChart3 className="h-4 w-4 text-primary" />
+            )}
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-semibold tracking-tight">Glauber Ads</span>

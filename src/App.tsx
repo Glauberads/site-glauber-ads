@@ -11,6 +11,7 @@ import Dashboard from "./pages/admin/Dashboard.tsx";
 import Leads from "./pages/admin/Leads.tsx";
 import Integrations from "./pages/admin/Integrations.tsx";
 import Marketing from "./pages/admin/Marketing.tsx";
+import Personalization from "./pages/admin/Personalization";
 import { AuthProvider } from "./hooks/useAuth";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,8 @@ const App = () => (
               <Route path="leads" element={<Leads />} />
               <Route path="integrations" element={<Integrations />} />
               <Route path="marketing" element={<Marketing />} />
+              <Route path="personalizacao" element={<Personalization />} />
+              <Route path="personalizacao" element={<Personalization />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
