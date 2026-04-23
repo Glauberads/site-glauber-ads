@@ -110,7 +110,12 @@ const Personalization = () => {
           <CardTitle>Imagens do Site</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={onSave} className="grid gap-8">
+            <form onSubmit={onSave} className="grid gap-8">
+              {/* Debug: show current saved URLs */}
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground">URL salva da logo: <span className="font-mono break-all">{settings?.logo_url ?? '—'}</span></p>
+                <p className="text-xs text-muted-foreground">URL salva do favicon: <span className="font-mono break-all">{settings?.favicon_url ?? '—'}</span></p>
+              </div>
             {/* Upload Logo */}
             <div>
               <FileUpload

@@ -1,4 +1,5 @@
 import { BarChart3, LayoutDashboard, LogOut, Megaphone, Users, Webhook, Palette } from "lucide-react";
+import logoImg from "@/assets/glauber-ads-logo.png";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
@@ -34,7 +35,16 @@ export const AdminSidebar = () => {
         <div className="flex items-center gap-2 px-2 py-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-md border border-primary/40 bg-primary/10 glow-orange overflow-hidden">
             {settings?.logo_url ? (
-              <img src={settings.logo_url} alt="Glauber Ads" className="h-8 w-8 object-contain" />
+              <img
+                src={settings.logo_url}
+                alt="Glauber Ads"
+                className="h-8 w-8 object-contain"
+                onError={(e) => {
+                  const img = e.currentTarget as HTMLImageElement;
+                  img.onerror = null;
+                  img.src = logoImg;
+                }}
+              />
             ) : (
               <BarChart3 className="h-4 w-4 text-primary" />
             )}

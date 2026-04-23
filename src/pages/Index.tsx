@@ -317,7 +317,16 @@ const Index = () => {
       <div className="fixed inset-x-0 top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
-            <img src={settings?.logo_url || logo} alt="Logo da Glauber Ads" className="h-12 w-12 object-contain" loading="eager" />
+            <img
+              src={settings?.logo_url || logo}
+              alt="Logo da Glauber Ads"
+              className="h-12 w-12 object-contain"
+              loading="eager"
+              onError={(e) => {
+                const img = e.currentTarget as HTMLImageElement;
+                if (img.src !== logo) img.src = logo;
+              }}
+            />
             <div>
               <p className="text-lg font-semibold">Glauber Ads</p>
               <p className="text-xs text-muted-foreground">Growth, performance e inteligência comercial</p>
