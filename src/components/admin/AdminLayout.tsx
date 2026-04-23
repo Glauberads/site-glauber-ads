@@ -10,7 +10,7 @@ const AdminLayout = () => {
 
   useEffect(() => {
     document.documentElement.classList.add("admin-theme", "dark");
-    return () => document.documentElement.classList.remove("admin-theme");
+    return () => document.documentElement.classList.remove("admin-theme", "dark");
   }, []);
 
   if (!isReady) {
