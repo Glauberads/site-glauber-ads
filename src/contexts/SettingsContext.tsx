@@ -14,7 +14,10 @@ interface SettingsContextType {
   loading: boolean;
   error: string | null;
   reloadSettings: () => Promise<void>;
-  saveSettings: (payload: Partial<SiteSettings>) => Promise<boolean>;
+  /**
+   * Returns an object with success flag and optional message for errors.
+   */
+  saveSettings: (payload: Partial<SiteSettings>) => Promise<{ success: boolean; message?: string }>;
   updateFaviconDynamically: (url: string | null) => void;
 }
 
@@ -94,32 +97,44 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setSettings((prev) => (prev ? { ...prev, favicon_url: url } : { favicon_url: url }));
   }, []);
 
-  const saveSettings = useCallback(async (payload: Partial<SiteSettings>): Promise<boolean> => {
+  const saveSettings = useCallback(async (payload: Partial<SiteSettings>): Promise<{ success: boolean; message?: string }> => {
     try {
       console.log("[Settings] Salvando configurações:", payload);
-      
+
       // Try to get existing row
       const { data: existing, error: selectErr } = await supabase.from("site_settings").select("id").maybeSingle();
-      if (selectErr) throw selectErr;
+      if (selectErr) {
+        console.error("[Settings] Erro ao buscar row existente:", selectErr);
+        setError(selectErr.message || String(selectErr));
+        return { success: false, message: selectErr.message || "Erro ao verificar registro existente" };
+      }
 
       if (existing?.id) {
         const { error } = await supabase.from("site_settings").update(payload).eq("id", existing.id);
-        if (error) throw error;
+        if (error) {
+          console.error("[Settings] Erro ao atualizar site_settings:", error);
+          setError(error.message || String(error));
+          return { success: false, message: error.message || "Erro ao atualizar configurações" };
+        }
       } else {
         const { error } = await supabase.from("site_settings").insert(payload);
-        if (error) throw error;
+        if (error) {
+          console.error("[Settings] Erro ao inserir site_settings:", error);
+          setError(error.message || String(error));
+          return { success: false, message: error.message || "Erro ao inserir configurações" };
+        }
       }
 
       console.log("[Settings] Configurações salvas com sucesso!");
-      
+
       // Recarregar configurações após salvar
       await reloadSettings();
-      return true;
+      return { success: true };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Erro desconhecido";
-      console.error("[Settings] Erro ao salvar configurações:", err);
+      console.error("[Settings] Exceção ao salvar configurações:", err);
       setError(errorMessage);
-      return false;
+      return { success: false, message: errorMessage };
     }
   }, [reloadSettings]);
 

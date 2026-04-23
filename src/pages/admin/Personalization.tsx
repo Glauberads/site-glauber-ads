@@ -79,13 +79,14 @@ const Personalization = () => {
         whatsapp_number: whatsappNumber, // Include WhatsApp number
       };
 
-      const success = await saveSettings(updatedSettings);
-      
-      if (success) {
+      const result = await saveSettings(updatedSettings);
+
+      if (result.success) {
         toast.success("Configurações salvas com sucesso!");
         setUploadedFiles({ logo: false, favicon: false });
       } else {
-        toast.error("Erro ao salvar configurações. Tente novamente.");
+        console.error("Erro ao salvar configurações:", result.message);
+        toast.error(result.message || "Erro ao salvar configurações. Tente novamente.");
       }
     } catch (error) {
       console.error("Erro ao salvar configurações:", error);
