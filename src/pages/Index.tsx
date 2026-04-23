@@ -123,7 +123,7 @@ const initialState: FormState = {
 
 const Index = () => {
   const { toast } = useToast();
-  const { settings } = useSiteSettings();
+  const { settings } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
   const [ctaContext, setCtaContext] = useState("Hero");
   const [form, setForm] = useState<FormState>(initialState);
@@ -131,10 +131,7 @@ const Index = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    document.documentElement.classList.add("dark");
-    return () => document.documentElement.classList.remove("dark");
-  }, []);
+  // Do not force dark mode on the public homepage; theme controlled globally
 
   // Carregar dados salvos do localStorage ao abrir modal
   useEffect(() => {
