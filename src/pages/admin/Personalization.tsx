@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { AlertCircle, CheckCircle2, Phone } from "lucide-react";
 
 const Personalization = () => {
-  const { settings, saveSettings } = useSettings();
+  const { settings, saveSettings, error: settingsError } = useSettings();
   const [logoUrl, setLogoUrl] = useState<string>("");
   const [faviconUrl, setFaviconUrl] = useState<string>("");
   const [whatsappNumber, setWhatsappNumber] = useState<string>("");
@@ -111,6 +111,22 @@ const Personalization = () => {
         </CardHeader>
         <CardContent>
             <form onSubmit={onSave} className="grid gap-8">
+              {/** Show context error if present for debugging save failures **/}
+              {settings && (settings as any) && (
+                <></>
+              )}
+              {/* Settings error from context */}
+              {/** useSettings exposes error via save result; show it here **/}
+              {/** eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+              {/* @ts-ignore */}
+              {/** show last error from context if exists **/}
+              {/** This helps reveal Supabase/RLS errors to the admin **/}
+              {/** The SettingsContext sets `error` on failure */}
+              {settingsError && (
+                <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+                  <strong>Erro ao salvar:</strong> {settingsError}
+                </div>
+              )}
               {/* Debug: show current saved URLs */}
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">URL salva da logo: <span className="font-mono break-all">{settings?.logo_url ?? '—'}</span></p>
