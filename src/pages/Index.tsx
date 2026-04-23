@@ -30,7 +30,7 @@ import { MarketingScripts } from "@/components/MarketingScripts";
 import { useToast } from "@/components/ui/use-toast";
 import { cleanWhatsApp, validateWhatsApp, validateEmail, formatWhatsAppForLink } from "@/lib/validation";
 import { checkRateLimit, recordAttempt, getAttemptsRemaining } from "@/lib/rateLimit";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useSettings } from "@/contexts/SettingsContext";
 
 type FormState = {
   name: string;

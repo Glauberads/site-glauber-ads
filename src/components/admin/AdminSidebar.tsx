@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useSettings } from "@/contexts/SettingsContext";
 import { Button } from "@/components/ui/button";
 
 const items = [
@@ -26,7 +26,7 @@ const items = [
 
 export const AdminSidebar = () => {
   const { signOut, user } = useAuth();
-  const { settings } = useSiteSettings();
+  const { settings } = useSettings();
 
   return (
     <Sidebar collapsible="icon">

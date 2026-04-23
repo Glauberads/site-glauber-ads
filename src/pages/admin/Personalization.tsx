@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useSettings } from "@/contexts/SettingsContext";
 import { uploadToStorage } from "@/lib/storageService";
 import { toast } from "sonner";
 import { AlertCircle, CheckCircle2, Phone } from "lucide-react";
 
 const Personalization = () => {
-  const { settings, save: saveSettings } = useSiteSettings();
+  const { settings, saveSettings } = useSettings();
   const [logoUrl, setLogoUrl] = useState<string>("");
   const [faviconUrl, setFaviconUrl] = useState<string>("");
   const [whatsappNumber, setWhatsappNumber] = useState<string>("");
@@ -67,7 +67,8 @@ const Personalization = () => {
     setUploadedFiles((prev) => ({ ...prev, favicon: false }));
   };
 
-  const onSave = async () => {
+  const onSave = async (event: React.FormEvent) => {
+    event.preventDefault();
     try {
       setSaving(true);
 
@@ -78,8 +79,14 @@ const Personalization = () => {
         whatsapp_number: whatsappNumber, // Include WhatsApp number
       };
 
-      await saveSettings(updatedSettings);
-      toast.success("Configurações salvas com sucesso!");
+      const success = await saveSettings(updatedSettings);
+      
+      if (success) {
+        toast.success("Configurações salvas com sucesso!");
+        setUploadedFiles({ logo: false, favicon: false });
+      } else {
+        toast.error("Erro ao salvar configurações. Tente novamente.");
+      }
     } catch (error) {
       console.error("Erro ao salvar configurações:", error);
       toast.error("Erro ao salvar configurações. Tente novamente.");
