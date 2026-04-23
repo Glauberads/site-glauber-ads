@@ -563,23 +563,26 @@ const Index = () => {
           </div>
         </section>
 
-        <section className="py-20">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-lg border border-border/70 bg-card/60 px-6 py-12 text-center sm:px-10">
-              <p className="text-sm font-medium text-primary">Fechamento</p>
-              <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">
-                Sua operação não precisa só de mais alcance. Precisa de mais inteligência para transformar atenção em venda.
+        <section className="py-20 fechamento-section dark">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 grid-lines relative">
+            <div className="rounded-xl fechamento-card px-8 py-16 text-center shadow-2xl">
+              {/* TESTE VISUAL: Remover depois */}
+              <div style={{position:'absolute',top:8,right:8,color:'#FF6B00',fontWeight:'bold',zIndex:99}}>DARK TEST</div>
+              <p className="text-base font-bold uppercase tracking-widest fechamento-accent mb-2">Fechamento</p>
+              <h2 className="mt-4 text-4xl font-extrabold sm:text-5xl text-white drop-shadow-lg">
+                Sua operação não precisa só de mais alcance.<br />
+                <span className="text-[hsl(var(--accent-orange))] text-glow-orange">Precisa de mais inteligência</span> para transformar atenção em venda.
               </h2>
-              <p className="mx-auto mt-5 max-w-4xl text-lg leading-8 text-muted-foreground">
+              <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-gray-300">
                 Se tráfego, criativo, automação e atendimento não trabalham juntos, o crescimento vira desperdício disfarçado.
               </p>
-              <div className="mt-8">
-                <Button size="lg" onClick={() => openModal("Fechamento")} className="gap-2">
+              <div className="mt-10 flex justify-center">
+                <Button size="lg" onClick={() => openModal("Fechamento")} className="gap-2 fechamento-btn-glow text-lg px-8 py-4 font-semibold">
                   Quero falar com um especialista
                   <ArrowRight />
                 </Button>
               </div>
-              <p className="mt-4 text-sm text-muted-foreground">
+              <p className="mt-6 text-base text-gray-400">
                 Abra a conversa com contexto e receba um direcionamento mais estratégico para sua necessidade.
               </p>
             </div>
