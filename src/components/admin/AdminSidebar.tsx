@@ -1,4 +1,5 @@
-import { BarChart3, LayoutDashboard, LogOut, Megaphone, Users, Webhook, Palette } from "lucide-react";
+import { useEffect, useState } from "react";
+import { LayoutDashboard, LogOut, Megaphone, Users, Webhook, Palette } from "lucide-react";
 import logoImg from "@/assets/glauber-ads-logo.png";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -16,6 +17,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useSettings } from "@/contexts/SettingsContext";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 const items = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard, end: true },
@@ -28,26 +30,47 @@ const items = [
 export const AdminSidebar = () => {
   const { signOut, user } = useAuth();
   const { settings } = useSettings();
+  const [sidebarLogoUrl, setSidebarLogoUrl] = useState<string>(logoImg);
+
+  useEffect(() => {
+    const savedLogo = settings?.logo_url;
+    if (!savedLogo) {
+      setSidebarLogoUrl(logoImg);
+      return;
+    }
+
+    if (/^https?:\/\//i.test(savedLogo)) {
+      setSidebarLogoUrl(savedLogo);
+      return;
+    }
+
+    const normalizedPath = savedLogo.replace(/^\/+/g, "").replace(/^site-assets\//, "").replace(/^\/site-assets\//, "");
+    const { data, error } = supabase.storage.from("site-assets").getPublicUrl(normalizedPath);
+    if (!error && data?.publicUrl) {
+      setSidebarLogoUrl(data.publicUrl);
+      return;
+    }
+
+    setSidebarLogoUrl(logoImg);
+  }, [settings?.logo_url]);
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2 px-2 py-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-md border border-primary/40 bg-primary/10 glow-orange overflow-hidden">
-            {settings?.logo_url ? (
-              <img
-                src={settings.logo_url}
-                alt="Glauber Ads"
-                className="h-8 w-8 object-contain"
-                onError={(e) => {
-                  const img = e.currentTarget as HTMLImageElement;
-                  img.onerror = null;
-                  img.src = logoImg;
-                }}
-              />
-            ) : (
-              <BarChart3 className="h-4 w-4 text-primary" />
-            )}
+            <img
+              src={sidebarLogoUrl}
+              alt="Glauber Ads"
+              className="h-8 w-8 object-contain"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                if (!target.dataset.failed) {
+                  target.dataset.failed = 'true';
+                  target.src = logoImg;
+                }
+              }}
+            />
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-semibold tracking-tight">Glauber Ads</span>

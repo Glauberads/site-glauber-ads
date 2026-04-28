@@ -124,6 +124,7 @@ const initialState: FormState = {
 const Index = () => {
   const { toast } = useToast();
   const { settings } = useSettings();
+  const [logoUrl, setLogoUrl] = useState<string>(logo);
   const [isOpen, setIsOpen] = useState(false);
   const [ctaContext, setCtaContext] = useState("Hero");
   const [form, setForm] = useState<FormState>(initialState);
@@ -131,7 +132,49 @@ const Index = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Do not force dark mode on the public homepage; theme controlled globally
+  const normalizeStoragePath = (path: string) => {
+    return path.replace(/^\/+/g, "").replace(/^site-assets\//, "").replace(/^\/site-assets\//, "");
+  };
+
+  useEffect(() => {
+    const resolveLogoUrl = async () => {
+      const savedLogo = settings?.logo_url;
+      if (!savedLogo) {
+        setLogoUrl(logo);
+        return;
+      }
+
+      if (/^https?:\/\//i.test(savedLogo)) {
+        setLogoUrl(savedLogo);
+        return;
+      }
+
+      try {
+        const normalizedPath = normalizeStoragePath(savedLogo);
+        const { data, error } = supabase.storage.from("site-assets").getPublicUrl(normalizedPath);
+
+        if (error || !data?.publicUrl) {
+          console.warn("[Header] Falha ao resolver logo_url via Storage:", error?.message || "URL pública não disponível", savedLogo);
+          setLogoUrl(logo);
+          return;
+        }
+
+        setLogoUrl(data.publicUrl);
+      } catch (err) {
+        console.error("[Header] Exceção ao resolver logo_url:", err);
+        setLogoUrl(logo);
+      } finally {
+        setLogoLoading(false);
+      }
+    };
+
+    resolveLogoUrl();
+  }, [settings?.logo_url]);
+
+  // Apply dashboard colors to the public homepage
+  useEffect(() => {
+    document.documentElement.classList.add("admin-theme", "dark");
+  }, []);
 
   // Carregar dados salvos do localStorage ao abrir modal
   useEffect(() => {
@@ -318,13 +361,16 @@ const Index = () => {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
             <img
-              src={settings?.logo_url || logo}
+              src={logoUrl}
               alt="Logo da Glauber Ads"
               className="h-12 w-12 object-contain"
               loading="eager"
               onError={(e) => {
-                const img = e.currentTarget as HTMLImageElement;
-                if (img.src !== logo) img.src = logo;
+                const target = e.currentTarget as HTMLImageElement;
+                if (!target.dataset.failed) {
+                  target.dataset.failed = 'true';
+                  target.src = logo;
+                }
               }}
             />
             <div>
@@ -566,8 +612,6 @@ const Index = () => {
         <section className="py-20 fechamento-section dark">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 grid-lines relative">
             <div className="rounded-xl fechamento-card px-8 py-16 text-center shadow-2xl">
-              {/* TESTE VISUAL: Remover depois */}
-              <div style={{position:'absolute',top:8,right:8,color:'#FF6B00',fontWeight:'bold',zIndex:99}}>DARK TEST</div>
               <p className="text-base font-bold uppercase tracking-widest fechamento-accent mb-2">Fechamento</p>
               <h2 className="mt-4 text-4xl font-extrabold sm:text-5xl text-white drop-shadow-lg">
                 Sua operação não precisa só de mais alcance.<br />
