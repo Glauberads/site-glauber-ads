@@ -374,13 +374,13 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <MarketingScripts />
-      <div className="fixed inset-x-0 top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4">
+      <div className="fixed inset-x-0 top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-xl">
+        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:h-20 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3 sm:gap-4">
             <img
               src={logoUrl}
               alt="Logo da Glauber Ads"
-              className="h-12 w-12 object-contain"
+              className="h-10 w-10 shrink-0 object-contain sm:h-12 sm:w-12"
               loading="eager"
               onError={() => {
                 if (logoUrl !== logo) {
@@ -389,13 +389,14 @@ const Index = () => {
               }}
             />
             <div>
-              <p className="text-lg font-semibold">Glauber Ads</p>
-              <p className="text-xs text-muted-foreground">Growth, performance e inteligência comercial</p>
+              <p className="text-base font-semibold leading-tight sm:text-lg">Glauber Ads</p>
+              <p className="hidden text-xs text-muted-foreground sm:block">Growth, performance e inteligência comercial</p>
             </div>
           </div>
-          <Button onClick={() => openModal("Header")} className="gap-2" aria-label="Abrir formulário de contato">
-            Diagnosticar operação
-            <ArrowRight />
+          <Button size="sm" onClick={() => openModal("Header")} className="h-9 gap-1.5 px-4 text-[13px] sm:h-10 sm:gap-2 sm:px-5 sm:text-sm" aria-label="Abrir formulário de contato">
+            <span className="hidden sm:inline">Diagnosticar operação</span>
+            <span className="sm:hidden">Diagnosticar</span>
+            <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </Button>
         </div>
       </div>
