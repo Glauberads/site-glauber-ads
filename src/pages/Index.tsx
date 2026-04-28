@@ -314,7 +314,7 @@ const Index = () => {
       }
 
       // Analytics Meta Pixel (Lead)
-      const fbWindow = window as Window & { fbq?: any };
+      const fbWindow = window as Window & { fbq?: (event: string, name: string, params?: Record<string, unknown>) => void };
       if (typeof fbWindow.fbq === "function") {
         const timeOnPage = Math.round((Date.now() - startTime) / 1000);
         fbWindow.fbq("track", "Lead", {
@@ -802,5 +802,3 @@ const Index = () => {
 };
 
 export default Index;
-   
- 

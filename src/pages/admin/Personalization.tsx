@@ -136,13 +136,11 @@ const Personalization = () => {
         <CardContent>
             <form onSubmit={onSave} className="grid gap-8">
               {/** Show context error if present for debugging save failures **/}
-              {settings && (settings as any) && (
-                <></>
-              )}
+
               {/* Settings error from context */}
               {/** useSettings exposes error via save result; show it here **/}
               {/** eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-              {/* @ts-ignore */}
+              {/* @ts-expect-error: Ignore specific property check for settingsError from context */}
               {/** show last error from context if exists **/}
               {/** This helps reveal Supabase/RLS errors to the admin **/}
               {/** The SettingsContext sets `error` on failure */}

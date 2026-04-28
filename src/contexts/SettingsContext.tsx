@@ -79,7 +79,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const updateFaviconDynamically = useCallback((url: string | null) => {
     updateFaviconInDOM(url);
     // Atualização Otimista no Cache
-    queryClient.setQueryData(["siteSettings"], (old: any) => ({ ...old, favicon_url: url }));
+    queryClient.setQueryData(["siteSettings"], (old: SiteSettings | null) => old ? { ...old, favicon_url: url } : null);
   }, [queryClient]);
 
   const saveSettings = useCallback(async (payload: Partial<SiteSettings>): Promise<{ success: boolean; message?: string }> => {
