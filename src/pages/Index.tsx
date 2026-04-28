@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   BarChart3,
@@ -145,6 +146,28 @@ const initialState: FormState = {
 };
 
 const Index = () => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.21, 0.47, 0.32, 0.98],
+      },
+    },
+  };
+
   const { toast } = useToast();
   const { settings } = useSettings();
   const [logoUrl, setLogoUrl] = useState<string>(logo);
@@ -535,10 +558,17 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            <motion.div 
+              className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+            >
               {authorityCards.map(({ title, description, icon: Icon }) => (
-                <article 
+                <motion.article 
                   key={title} 
+                  variants={itemVariants}
                   className="group relative rounded-xl border border-border/40 bg-gradient-to-b from-card/80 to-card/40 p-8 backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] hover:shadow-primary/5"
                 >
                   <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-border/60 bg-gradient-to-br from-secondary/50 to-background/50 shadow-inner transition-colors duration-300 group-hover:border-primary/40 group-hover:bg-secondary/60">
@@ -550,9 +580,9 @@ const Index = () => {
                       {description}
                     </p>
                   </div>
-                </article>
+                </motion.article>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -587,10 +617,17 @@ const Index = () => {
               <h2 className="text-3xl font-semibold sm:text-4xl">Soluções para destravar crescimento com inteligência operacional</h2>
             </div>
 
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <motion.div 
+              className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+            >
               {solutionCards.map(({ title, description, icon: Icon }) => (
-                <article 
+                <motion.article 
                   key={title} 
+                  variants={itemVariants}
                   className="group relative rounded-xl border border-border/40 bg-gradient-to-b from-card/80 to-card/40 p-8 backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] hover:shadow-primary/5"
                 >
                   <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-border/60 bg-gradient-to-br from-secondary/50 to-background/50 shadow-inner transition-colors duration-300 group-hover:border-primary/40 group-hover:bg-secondary/60">
@@ -602,9 +639,9 @@ const Index = () => {
                       {description}
                     </p>
                   </div>
-                </article>
+                </motion.article>
               ))}
-            </div>
+            </motion.div>
 
             <div className="mt-10">
               <Button size="lg" onClick={() => openModal("Soluções - Diagnóstico")} className="gap-2">
