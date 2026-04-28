@@ -438,20 +438,22 @@ const Index = () => {
                 <h1 className="max-w-4xl text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
                   Atrair leads não basta. Sua operação precisa converter com contexto, velocidade e estrutura.
                 </h1>
-                <p className="max-w-3xl text-lg leading-8 text-muted-foreground">
-                  A Glauber Ads conecta tráfego, criativo, automação e inteligência comercial para reduzir desperdício e escalar resultado com mais controle.
-                </p>
-                <p className="max-w-3xl text-base leading-7 text-muted-foreground">
-                  Descubra onde sua operação está perdendo eficiência e qual é o próximo passo para crescer com mais controle.
-                </p>
+                <div className="rounded-xl bg-black/30 p-4 -ml-4 backdrop-blur-md">
+                  <p className="max-w-3xl text-lg leading-8 text-gray-200">
+                    A Glauber Ads conecta tráfego, criativo, automação e inteligência comercial para reduzir desperdício e escalar resultado com mais controle.
+                  </p>
+                  <p className="mt-3 max-w-3xl text-base leading-7 text-gray-400">
+                    Descubra onde sua operação está perdendo eficiência e qual é o próximo passo para crescer com mais controle.
+                  </p>
+                </div>
               </div>
 
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <Button size="lg" className="gap-2" onClick={() => openModal("Hero - Diagnóstico")}>
+              <div className="mt-6 flex flex-col gap-4 sm:flex-row">
+                <Button size="lg" className="gap-2 fechamento-btn-glow px-8 py-6 text-base font-semibold" onClick={() => openModal("Hero - Diagnóstico")}>
                   Quero diagnosticar minha operação
                   <ArrowRight />
                 </Button>
-                <Button size="lg" variant="outline" className="gap-2" onClick={() => openModal("Hero - Especialista")}>
+                <Button size="lg" variant="outline" className="gap-2 px-8 py-6 text-base" onClick={() => openModal("Hero - Especialista")}>
                   Quero falar com um especialista
                   <ChevronRight />
                 </Button>
@@ -468,7 +470,7 @@ const Index = () => {
             </div>
 
             <div className="relative">
-              <div className="rounded-lg border border-border/70 bg-card/70 p-5 shadow-2xl shadow-primary/10 backdrop-blur-xl">
+              <div className="rounded-lg border border-border/70 bg-background/80 p-5 shadow-2xl shadow-primary/10 backdrop-blur-3xl">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="rounded-lg border border-border/70 bg-background/80 p-4">
                     <p className="text-sm text-muted-foreground">Camadas de operação</p>
