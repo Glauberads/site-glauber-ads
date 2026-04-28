@@ -407,7 +407,7 @@ const Index = () => {
           <div 
             className="absolute inset-0 z-0 opacity-40 mix-blend-screen"
             style={{
-              backgroundImage: `url(${heroBg})`,
+              backgroundImage: `url(${settings?.hero_bg_url || heroBg})`,
               backgroundPosition: 'right center',
               backgroundSize: 'cover',
               backgroundRepeat: 'no-repeat',

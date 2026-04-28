@@ -6,6 +6,7 @@ export type SiteSettings = {
   id?: string;
   logo_url?: string | null;
   favicon_url?: string | null;
+  hero_bg_url?: string | null;
   whatsapp_number?: string | null;
 };
 
@@ -51,7 +52,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       // Se tabela não existe, cria dados vazios (fallback)
       if (fetchError?.code === "PGRST116" || fetchError?.message?.includes("not found")) {
         console.warn("[Settings] Tabela site_settings não encontrada. Usando valores padrão.");
-        return { logo_url: null, favicon_url: null, whatsapp_number: null };
+        return { logo_url: null, favicon_url: null, hero_bg_url: null, whatsapp_number: null };
       }
 
       if (fetchError) {
@@ -59,7 +60,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         throw new Error(fetchError.message);
       }
 
-      return data ?? { logo_url: null, favicon_url: null, whatsapp_number: null };
+      return data ?? { logo_url: null, favicon_url: null, hero_bg_url: null, whatsapp_number: null };
     },
     staleTime: 1000 * 60 * 60, // 1 hora de cache: evita refetch ao navegar entre páginas
   });

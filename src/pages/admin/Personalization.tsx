@@ -13,15 +13,18 @@ const Personalization = () => {
   const { settings, saveSettings, error: settingsError } = useSettings();
   const [logoUrl, setLogoUrl] = useState<string>("");
   const [faviconUrl, setFaviconUrl] = useState<string>("");
+  const [heroBgUrl, setHeroBgUrl] = useState<string>("");
   const [whatsappNumber, setWhatsappNumber] = useState<string>("");
   const [logoLoading, setLogoLoading] = useState(false);
   const [faviconLoading, setFaviconLoading] = useState(false);
+  const [heroBgLoading, setHeroBgLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState({ logo: false, favicon: false });
+  const [uploadedFiles, setUploadedFiles] = useState({ logo: false, favicon: false, heroBg: false });
 
   useEffect(() => {
     setLogoUrl(settings?.logo_url ?? "");
     setFaviconUrl(settings?.favicon_url ?? "");
+    setHeroBgUrl(settings?.hero_bg_url ?? "");
     setWhatsappNumber(settings?.whatsapp_number ?? "");
   }, [settings]);
 
@@ -57,6 +60,22 @@ const Personalization = () => {
     }
   };
 
+  const handleHeroBgUpload = async (file: File) => {
+    setHeroBgLoading(true);
+    try {
+      const result = await uploadToStorage(file, "hero_bgs");
+      if (result.success && result.publicUrl) {
+        setHeroBgUrl(result.publicUrl);
+        setUploadedFiles((prev) => ({ ...prev, heroBg: true }));
+        toast.success("Background da Hero enviado com sucesso!");
+      } else {
+        toast.error(result.error || "Erro ao fazer upload do background da hero", { duration: 6000 });
+      }
+    } finally {
+      setHeroBgLoading(false);
+    }
+  };
+
   const handleRemoveLogo = () => {
     setLogoUrl("");
     setUploadedFiles((prev) => ({ ...prev, logo: false }));
@@ -67,23 +86,28 @@ const Personalization = () => {
     setUploadedFiles((prev) => ({ ...prev, favicon: false }));
   };
 
+  const handleRemoveHeroBg = () => {
+    setHeroBgUrl("");
+    setUploadedFiles((prev) => ({ ...prev, heroBg: false }));
+  };
+
   const onSave = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
       setSaving(true);
 
-      // Save logo and favicon URLs
       const updatedSettings = {
         logo_url: logoUrl,
         favicon_url: faviconUrl,
-        whatsapp_number: whatsappNumber, // Include WhatsApp number
+        hero_bg_url: heroBgUrl,
+        whatsapp_number: whatsappNumber,
       };
 
       const result = await saveSettings(updatedSettings);
 
       if (result.success) {
         toast.success("Configurações salvas com sucesso!");
-        setUploadedFiles({ logo: false, favicon: false });
+        setUploadedFiles({ logo: false, favicon: false, heroBg: false });
       } else {
         console.error("Erro ao salvar configurações:", result.message);
         toast.error(result.message || "Erro ao salvar configurações. Tente novamente.");
@@ -96,7 +120,7 @@ const Personalization = () => {
     }
   };
 
-  const hasChanges = uploadedFiles.logo || uploadedFiles.favicon;
+  const hasChanges = uploadedFiles.logo || uploadedFiles.favicon || uploadedFiles.heroBg;
 
   return (
     <div className="space-y-6">
@@ -162,6 +186,32 @@ const Personalization = () => {
               {faviconUrl && (
                 <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
                   <span className="inline-block w-2 h-2 rounded-full bg-green-500" /> URL do favicon carregada
+                </p>
+              )}
+            </div>
+
+            {/* Upload Hero Background */}
+            <div className="rounded-xl border border-border/40 bg-card/40 p-4 space-y-4">
+              <div>
+                <h3 className="text-lg font-medium">Imagem de Fundo da Hero</h3>
+                <p className="text-sm text-muted-foreground">
+                  Atualize a imagem exibida no fundo da seção principal da landing page.
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  <strong>Recomendado:</strong> Use uma imagem horizontal, com tons escuros e área mais limpa à esquerda para preservar a leitura da headline.
+                </p>
+              </div>
+              <FileUpload
+                label=""
+                placeholder="Clique ou arraste a imagem aqui"
+                previewUrl={heroBgUrl}
+                isLoading={heroBgLoading}
+                onFileSelect={handleHeroBgUpload}
+                onRemove={heroBgUrl ? handleRemoveHeroBg : undefined}
+              />
+              {heroBgUrl && (
+                <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+                  <span className="inline-block w-2 h-2 rounded-full bg-green-500" /> URL salva da imagem de fundo: <span className="font-mono break-all">{heroBgUrl}</span>
                 </p>
               )}
             </div>

@@ -143,6 +143,7 @@ CREATE TABLE IF NOT EXISTS public.site_settings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   logo_url TEXT,
   favicon_url TEXT,
+  hero_bg_url TEXT,
   whatsapp_number TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
