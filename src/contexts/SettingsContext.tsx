@@ -54,7 +54,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setError(null);
       console.log("[Settings] Buscando configurações do site...");
 
-      const { data, error: fetchError } = await supabase.from("site_settings").select("*").maybeSingle();
+      const { data, error: fetchError } = await supabase.from("site_settings").select("*").limit(1).maybeSingle();
 
       // Se tabela não existe, cria dados vazios (fallback)
       if (fetchError?.code === "PGRST116" || fetchError?.message?.includes("not found")) {
@@ -102,7 +102,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       console.log("[Settings] Salvando configurações:", payload);
 
       // Try to get existing row
-      const { data: existing, error: selectErr } = await supabase.from("site_settings").select("id").maybeSingle();
+      const { data: existing, error: selectErr } = await supabase.from("site_settings").select("id").limit(1).maybeSingle();
       if (selectErr) {
         console.error("[Settings] Erro ao buscar row existente:", selectErr);
         setError(selectErr.message || String(selectErr));
