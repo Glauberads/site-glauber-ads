@@ -7,7 +7,21 @@ import { Label } from "@/components/ui/label";
 import { useSettings } from "@/contexts/SettingsContext";
 import { uploadToStorage } from "@/lib/storageService";
 import { toast } from "sonner";
-import { AlertCircle, CheckCircle2, Phone } from "lucide-react";
+import { 
+  AlertCircle, 
+  CheckCircle2, 
+  Phone, 
+  Instagram, 
+  Facebook, 
+  Linkedin, 
+  Youtube, 
+  Globe, 
+  Type, 
+  TextQuote, 
+  Copyright,
+  Send,
+  Link2
+} from "lucide-react";
 
 const Personalization = () => {
   const { settings, saveSettings, error: settingsError } = useSettings();
@@ -21,11 +35,37 @@ const Personalization = () => {
   const [saving, setSaving] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState({ logo: false, favicon: false, heroBg: false });
 
+  // Footer & Social States
+  const [footerBrandName, setFooterBrandName] = useState("");
+  const [footerInstitutionalText, setFooterInstitutionalText] = useState("");
+  const [footerCopyright, setFooterCopyright] = useState("");
+  const [socialInstagram, setSocialInstagram] = useState("");
+  const [socialFacebook, setSocialFacebook] = useState("");
+  const [socialLinkedin, setSocialLinkedin] = useState("");
+  const [socialYoutube, setSocialYoutube] = useState("");
+  const [socialTiktok, setSocialTiktok] = useState("");
+  const [socialWebsite, setSocialWebsite] = useState("");
+
+  const [footerChanges, setFooterChanges] = useState(false);
+
   useEffect(() => {
     setLogoUrl(settings?.logo_url ?? "");
     setFaviconUrl(settings?.favicon_url ?? "");
     setHeroBgUrl(settings?.hero_bg_url ?? "");
     setWhatsappNumber(settings?.whatsapp_number ?? "");
+    
+    // Initialize Footer fields
+    setFooterBrandName(settings?.footer_brand_name ?? "");
+    setFooterInstitutionalText(settings?.footer_institutional_text ?? "");
+    setFooterCopyright(settings?.footer_copyright ?? "");
+    setSocialInstagram(settings?.social_instagram ?? "");
+    setSocialFacebook(settings?.social_facebook ?? "");
+    setSocialLinkedin(settings?.social_linkedin ?? "");
+    setSocialYoutube(settings?.social_youtube ?? "");
+    setSocialTiktok(settings?.social_tiktok ?? "");
+    setSocialWebsite(settings?.social_website ?? "");
+    
+    setFooterChanges(false);
   }, [settings]);
 
   const handleLogoUpload = async (file: File) => {
@@ -101,6 +141,15 @@ const Personalization = () => {
         favicon_url: faviconUrl,
         hero_bg_url: heroBgUrl,
         whatsapp_number: whatsappNumber,
+        footer_brand_name: footerBrandName,
+        footer_institutional_text: footerInstitutionalText,
+        footer_copyright: footerCopyright,
+        social_instagram: socialInstagram,
+        social_facebook: socialFacebook,
+        social_linkedin: socialLinkedin,
+        social_youtube: socialYoutube,
+        social_tiktok: socialTiktok,
+        social_website: socialWebsite,
       };
 
       const result = await saveSettings(updatedSettings);
@@ -120,7 +169,7 @@ const Personalization = () => {
     }
   };
 
-  const hasChanges = uploadedFiles.logo || uploadedFiles.favicon || uploadedFiles.heroBg;
+  const hasChanges = uploadedFiles.logo || uploadedFiles.favicon || uploadedFiles.heroBg || footerChanges || whatsappNumber !== (settings?.whatsapp_number ?? "");
 
   return (
     <div className="space-y-6">
@@ -253,6 +302,136 @@ const Personalization = () => {
               </Button>
             </div>
           </form>
+        </CardContent>
+      </Card>
+      
+      <Card className="border-border/60 bg-card/70">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            Rodapé e Redes Sociais
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Edite as informações exibidas no rodapé da landing page, incluindo texto institucional e links sociais.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-6">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Type className="h-4 w-4" />
+                  Nome da Marca no Rodapé
+                </Label>
+                <Input 
+                  value={footerBrandName} 
+                  onChange={(e) => { setFooterBrandName(e.target.value); setFooterChanges(true); }}
+                  placeholder="Glauber Ads"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Copyright className="h-4 w-4" />
+                  Texto de Copyright
+                </Label>
+                <Input 
+                  value={footerCopyright} 
+                  onChange={(e) => { setFooterCopyright(e.target.value); setFooterChanges(true); }}
+                  placeholder="© 2026 Glauber Ads. Todos os direitos reservados."
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <TextQuote className="h-4 w-4" />
+                Texto Institucional
+              </Label>
+              <Input 
+                value={footerInstitutionalText} 
+                onChange={(e) => { setFooterInstitutionalText(e.target.value); setFooterChanges(true); }}
+                placeholder="Performance, automação e inteligência comercial..."
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2 text-xs">
+                  <Instagram className="h-3 w-3" /> Instagram
+                </Label>
+                <Input 
+                  value={socialInstagram} 
+                  onChange={(e) => { setSocialInstagram(e.target.value); setFooterChanges(true); }}
+                  placeholder="https://instagram.com/..."
+                  className="text-xs"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2 text-xs">
+                  <Facebook className="h-3 w-3" /> Facebook
+                </Label>
+                <Input 
+                  value={socialFacebook} 
+                  onChange={(e) => { setSocialFacebook(e.target.value); setFooterChanges(true); }}
+                  placeholder="https://facebook.com/..."
+                  className="text-xs"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2 text-xs">
+                  <Linkedin className="h-3 w-3" /> LinkedIn
+                </Label>
+                <Input 
+                  value={socialLinkedin} 
+                  onChange={(e) => { setSocialLinkedin(e.target.value); setFooterChanges(true); }}
+                  placeholder="https://linkedin.com/in/..."
+                  className="text-xs"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2 text-xs">
+                  <Youtube className="h-3 w-3" /> YouTube
+                </Label>
+                <Input 
+                  value={socialYoutube} 
+                  onChange={(e) => { setSocialYoutube(e.target.value); setFooterChanges(true); }}
+                  placeholder="https://youtube.com/..."
+                  className="text-xs"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2 text-xs">
+                  <Send className="h-3 w-3" /> TikTok
+                </Label>
+                <Input 
+                  value={socialTiktok} 
+                  onChange={(e) => { setSocialTiktok(e.target.value); setFooterChanges(true); }}
+                  placeholder="https://tiktok.com/@..."
+                  className="text-xs"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2 text-xs">
+                  <Globe className="h-3 w-3" /> Site Adicional
+                </Label>
+                <Input 
+                  value={socialWebsite} 
+                  onChange={(e) => { setSocialWebsite(e.target.value); setFooterChanges(true); }}
+                  placeholder="https://seusite.com.br"
+                  className="text-xs"
+                />
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <Button
+                onClick={onSave}
+                className="glow-orange w-full sm:w-auto px-12"
+                disabled={saving || !hasChanges}
+              >
+                {saving ? "Salvando..." : "Salvar Configurações do Rodapé"}
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
 

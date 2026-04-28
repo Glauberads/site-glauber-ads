@@ -8,6 +8,15 @@ export type SiteSettings = {
   favicon_url?: string | null;
   hero_bg_url?: string | null;
   whatsapp_number?: string | null;
+  footer_brand_name?: string | null;
+  footer_institutional_text?: string | null;
+  social_instagram?: string | null;
+  social_facebook?: string | null;
+  social_linkedin?: string | null;
+  social_youtube?: string | null;
+  social_tiktok?: string | null;
+  social_website?: string | null;
+  footer_copyright?: string | null;
 };
 
 interface SettingsContextType {

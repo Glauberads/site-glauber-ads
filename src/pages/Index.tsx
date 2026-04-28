@@ -7,11 +7,21 @@ import {
   BrainCircuit,
   CheckCircle2,
   ChevronRight,
+  Facebook,
+  Globe,
+  Instagram,
   LineChart,
+  Linkedin,
+  Menu,
   MessagesSquare,
+  Phone,
   Radar,
+  Search,
+  Send,
   Sparkles,
   Target,
+  X,
+  Youtube,
   Zap,
 } from "lucide-react";
 
@@ -775,6 +785,68 @@ const Index = () => {
           </div>
         </section>
       </main>
+
+      <footer className="border-t border-border/40 bg-background/50 py-16 backdrop-blur-md">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-12 lg:grid-cols-2">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                {settings?.logo_url ? (
+                  <img src={settings.logo_url} alt="Logo" className="h-8 w-auto" />
+                ) : (
+                  <span className="text-2xl font-bold tracking-tighter text-white">
+                    {settings?.footer_brand_name || "Glauber Ads"}
+                  </span>
+                )}
+              </div>
+              <p className="max-w-md text-lg leading-relaxed text-muted-foreground">
+                {settings?.footer_institutional_text || "Performance, automação e inteligência comercial para operações que querem crescer com mais estrutura."}
+              </p>
+            </div>
+
+            <div className="flex flex-col justify-between lg:items-end">
+              <div className="flex flex-wrap gap-4">
+                {settings?.social_instagram && (
+                  <a href={settings.social_instagram} target="_blank" rel="noopener noreferrer" className="flex h-12 w-12 items-center justify-center rounded-xl border border-border/40 bg-card/40 text-muted-foreground transition-all hover:border-primary/40 hover:text-primary">
+                    <Instagram className="h-6 w-6" />
+                  </a>
+                )}
+                {settings?.social_facebook && (
+                  <a href={settings.social_facebook} target="_blank" rel="noopener noreferrer" className="flex h-12 w-12 items-center justify-center rounded-xl border border-border/40 bg-card/40 text-muted-foreground transition-all hover:border-primary/40 hover:text-primary">
+                    <Facebook className="h-6 w-6" />
+                  </a>
+                )}
+                {settings?.social_linkedin && (
+                  <a href={settings.social_linkedin} target="_blank" rel="noopener noreferrer" className="flex h-12 w-12 items-center justify-center rounded-xl border border-border/40 bg-card/40 text-muted-foreground transition-all hover:border-primary/40 hover:text-primary">
+                    <Linkedin className="h-6 w-6" />
+                  </a>
+                )}
+                {settings?.social_youtube && (
+                  <a href={settings.social_youtube} target="_blank" rel="noopener noreferrer" className="flex h-12 w-12 items-center justify-center rounded-xl border border-border/40 bg-card/40 text-muted-foreground transition-all hover:border-primary/40 hover:text-primary">
+                    <Youtube className="h-6 w-6" />
+                  </a>
+                )}
+                {settings?.social_tiktok && (
+                  <a href={settings.social_tiktok} target="_blank" rel="noopener noreferrer" className="flex h-12 w-12 items-center justify-center rounded-xl border border-border/40 bg-card/40 text-muted-foreground transition-all hover:border-primary/40 hover:text-primary">
+                    <Send className="h-6 w-6" />
+                  </a>
+                )}
+                {settings?.social_website && (
+                  <a href={settings.social_website} target="_blank" rel="noopener noreferrer" className="flex h-12 w-12 items-center justify-center rounded-xl border border-border/40 bg-card/40 text-muted-foreground transition-all hover:border-primary/40 hover:text-primary">
+                    <Globe className="h-6 w-6" />
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-16 border-t border-border/40 pt-8 text-center lg:text-left">
+            <p className="text-sm text-muted-foreground">
+              {settings?.footer_copyright || `© ${new Date().getFullYear()} Glauber Ads. Todos os direitos reservados.`}
+            </p>
+          </div>
+        </div>
+      </footer>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="border-border/70 bg-card/95 sm:max-w-md p-5 sm:p-6">
