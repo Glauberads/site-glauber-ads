@@ -29,7 +29,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { MarketingScripts } from "@/components/MarketingScripts";
 import { useToast } from "@/components/ui/use-toast";
-import { cleanWhatsApp, validateWhatsApp, validateEmail, formatWhatsAppForLink } from "@/lib/validation";
+import { cleanWhatsApp, validateWhatsApp, formatWhatsAppForLink } from "@/lib/validation";
 import { checkRateLimit, recordAttempt, getAttemptsRemaining } from "@/lib/rateLimit";
 import { useSettings } from "@/contexts/SettingsContext";
 
@@ -240,7 +240,6 @@ const Index = () => {
       nextErrors.name = "Nome muito longo (máx. 100 caracteres).";
     }
 
-    }
 
     // Validar WhatsApp
     const whatsappError = validateWhatsApp(form.whatsapp);
