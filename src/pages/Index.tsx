@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import logo from "@/assets/glauber-ads-logo.png";
+import heroBg from "@/assets/hero-bg.png";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -401,8 +402,20 @@ const Index = () => {
 
       <main>
         <section className="relative overflow-hidden border-b border-border/60 pt-28">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,hsl(var(--primary)/0.22),transparent_35%),radial-gradient(circle_at_80%_20%,hsl(var(--accent)/0.16),transparent_30%)]" />
-          <div className="relative mx-auto grid min-h-[88svh] max-w-7xl items-center gap-14 px-4 pb-20 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8">
+          {/* Background Image Layer */}
+          <div 
+            className="absolute inset-0 z-0 opacity-40 mix-blend-screen"
+            style={{
+              backgroundImage: `url(${heroBg})`,
+              backgroundPosition: 'right center',
+              backgroundSize: 'cover',
+              backgroundRepeat: 'no-repeat',
+              maskImage: 'linear-gradient(to right, transparent 0%, black 50%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 50%)'
+            }}
+          />
+          <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,hsl(var(--primary)/0.22),transparent_35%),radial-gradient(circle_at_80%_20%,hsl(var(--accent)/0.16),transparent_30%)]" />
+          <div className="relative z-10 mx-auto grid min-h-[88svh] max-w-7xl items-center gap-14 px-4 pb-20 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8">
             <div className="space-y-8">
               <div className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/40 px-4 py-2 text-sm text-muted-foreground">
                 <Sparkles className="h-4 w-4 text-primary" />
