@@ -32,7 +32,7 @@ const Marketing = () => {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    supabase.from("settings").select("*").maybeSingle().then(({ data }) => {
+    supabase.from("settings").select("*").limit(1).maybeSingle().then(({ data }) => {
       if (data) setS({ ...empty, ...data, ...Object.fromEntries(Object.entries(data).map(([k, v]) => [k, v ?? ""])) } as Settings);
     });
   }, []);
