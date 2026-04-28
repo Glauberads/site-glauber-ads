@@ -139,38 +139,25 @@ const Index = () => {
   };
 
   useEffect(() => {
-    const resolveLogoUrl = async () => {
-      const savedLogo = settings?.logo_url;
-      if (!savedLogo) {
-        setLogoUrl(logo);
-        return;
-      }
+    const savedLogo = settings?.logo_url;
+    if (!savedLogo) {
+      setLogoUrl(logo);
+      return;
+    }
 
-      if (/^https?:\/\//i.test(savedLogo)) {
-        setLogoUrl(savedLogo);
-        return;
-      }
+    if (/^https?:\/\//i.test(savedLogo)) {
+      setLogoUrl(savedLogo);
+      return;
+    }
 
-      try {
-        const normalizedPath = normalizeStoragePath(savedLogo);
-        const { data, error } = supabase.storage.from("site-assets").getPublicUrl(normalizedPath);
+    const normalizedPath = normalizeStoragePath(savedLogo);
+    const { data } = supabase.storage.from("site-assets").getPublicUrl(normalizedPath);
 
-        if (error || !data?.publicUrl) {
-          console.warn("[Header] Falha ao resolver logo_url via Storage:", error?.message || "URL pública não disponível", savedLogo);
-          setLogoUrl(logo);
-          return;
-        }
-
-        setLogoUrl(data.publicUrl);
-      } catch (err) {
-        console.error("[Header] Exceção ao resolver logo_url:", err);
-        setLogoUrl(logo);
-      } finally {
-        setLogoLoading(false);
-      }
-    };
-
-    resolveLogoUrl();
+    if (data?.publicUrl) {
+      setLogoUrl(data.publicUrl);
+    } else {
+      setLogoUrl(logo);
+    }
   }, [settings?.logo_url]);
 
   // Apply dashboard colors to the public homepage

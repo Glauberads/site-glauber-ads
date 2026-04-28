@@ -3,17 +3,20 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Suspense, lazy } from "react";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
-import Login from "./pages/admin/Login.tsx";
-import AdminLayout from "./components/admin/AdminLayout";
-import Dashboard from "./pages/admin/Dashboard.tsx";
-import Leads from "./pages/admin/Leads.tsx";
-import Integrations from "./pages/admin/Integrations.tsx";
-import Marketing from "./pages/admin/Marketing.tsx";
-import Personalization from "./pages/admin/Personalization";
 import { AuthProvider } from "./hooks/useAuth";
 import { SettingsProvider } from "./contexts/SettingsContext";
+
+// Lazy Loading para o painel administrativo (Code Splitting)
+const Login = lazy(() => import("./pages/admin/Login.tsx"));
+const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
+const Dashboard = lazy(() => import("./pages/admin/Dashboard.tsx"));
+const Leads = lazy(() => import("./pages/admin/Leads.tsx"));
+const Integrations = lazy(() => import("./pages/admin/Integrations.tsx"));
+const Marketing = lazy(() => import("./pages/admin/Marketing.tsx"));
+const Personalization = lazy(() => import("./pages/admin/Personalization"));
 
 const queryClient = new QueryClient();
 
@@ -27,15 +30,22 @@ const App = () => (
           <AuthProvider>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/admin/login" element={<Login />} />
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<Dashboard />} />
-                <Route path="leads" element={<Leads />} />
-                <Route path="integrations" element={<Integrations />} />
-                <Route path="marketing" element={<Marketing />} />
-                <Route path="personalizacao" element={<Personalization />} />
-                <Route path="personalizacao" element={<Personalization />} />
-              </Route>
+              
+              <Route path="/admin/*" element={
+                <Suspense fallback={<div className="h-screen w-full flex items-center justify-center text-muted-foreground">Carregando painel administrativo...</div>}>
+                  <Routes>
+                    <Route path="login" element={<Login />} />
+                    <Route element={<AdminLayout />}>
+                      <Route index element={<Dashboard />} />
+                      <Route path="leads" element={<Leads />} />
+                      <Route path="integrations" element={<Integrations />} />
+                      <Route path="marketing" element={<Marketing />} />
+                      <Route path="personalizacao" element={<Personalization />} />
+                    </Route>
+                  </Routes>
+                </Suspense>
+              } />
+
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

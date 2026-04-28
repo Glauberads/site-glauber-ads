@@ -1,5 +1,5 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import React, { createContext, useCallback, useContext, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export type SiteSettings = {
@@ -14,9 +14,6 @@ interface SettingsContextType {
   loading: boolean;
   error: string | null;
   reloadSettings: () => Promise<void>;
-  /**
-   * Returns an object with success flag and optional message for errors.
-   */
   saveSettings: (payload: Partial<SiteSettings>) => Promise<{ success: boolean; message?: string }>;
   updateFaviconDynamically: (url: string | null) => void;
 }
@@ -43,100 +40,76 @@ const updateFaviconInDOM = (faviconUrl: string | null) => {
 };
 
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  const reloadSettings = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      console.log("[Settings] Buscando configurações do site...");
-
+  const { data: settings = null, isLoading: loading, error: queryError, refetch } = useQuery({
+    queryKey: ["siteSettings"],
+    queryFn: async () => {
+      console.log("[Settings] Buscando configurações do site (React Query)...");
       const { data, error: fetchError } = await supabase.from("site_settings").select("*").limit(1).maybeSingle();
 
       // Se tabela não existe, cria dados vazios (fallback)
       if (fetchError?.code === "PGRST116" || fetchError?.message?.includes("not found")) {
         console.warn("[Settings] Tabela site_settings não encontrada. Usando valores padrão.");
-        setSettings({ logo_url: null, favicon_url: null });
-        updateFaviconInDOM(null);
-        return;
+        return { logo_url: null, favicon_url: null, whatsapp_number: null };
       }
 
       if (fetchError) {
         console.error("[Settings] Erro ao buscar configurações:", fetchError.message);
-        setError(fetchError.message);
-        setSettings(null);
-        updateFaviconInDOM(null);
-        return;
+        throw new Error(fetchError.message);
       }
 
-      const resolvedSettings = data ?? { logo_url: null, favicon_url: null };
-      setSettings(resolvedSettings);
-      updateFaviconInDOM(resolvedSettings.favicon_url);
-      console.log("[Settings] Configurações carregadas:", resolvedSettings);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Erro desconhecido";
-      console.error("[Settings] Exceção ao carregar configurações:", err);
-      setError(errorMessage);
-      setSettings(null);
-      updateFaviconInDOM(null);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      return data ?? { logo_url: null, favicon_url: null, whatsapp_number: null };
+    },
+    staleTime: 1000 * 60 * 60, // 1 hora de cache: evita refetch ao navegar entre páginas
+  });
 
-  // Carrega configurações na primeira montagem
+  const error = queryError ? queryError.message : null;
+
+  // Atualiza o DOM toda vez que o favicon_url mudar no cache
   useEffect(() => {
-    reloadSettings();
-  }, [reloadSettings]);
+    updateFaviconInDOM(settings?.favicon_url ?? null);
+  }, [settings?.favicon_url]);
+
+  const reloadSettings = async () => {
+    await refetch();
+  };
 
   const updateFaviconDynamically = useCallback((url: string | null) => {
     updateFaviconInDOM(url);
-    setSettings((prev) => (prev ? { ...prev, favicon_url: url } : { favicon_url: url }));
-  }, []);
+    // Atualização Otimista no Cache
+    queryClient.setQueryData(["siteSettings"], (old: any) => ({ ...old, favicon_url: url }));
+  }, [queryClient]);
 
   const saveSettings = useCallback(async (payload: Partial<SiteSettings>): Promise<{ success: boolean; message?: string }> => {
     try {
       console.log("[Settings] Salvando configurações:", payload);
 
-      // Try to get existing row
       const { data: existing, error: selectErr } = await supabase.from("site_settings").select("id").limit(1).maybeSingle();
       if (selectErr) {
         console.error("[Settings] Erro ao buscar row existente:", selectErr);
-        setError(selectErr.message || String(selectErr));
         return { success: false, message: selectErr.message || "Erro ao verificar registro existente" };
       }
 
       if (existing?.id) {
         const { error } = await supabase.from("site_settings").update(payload).eq("id", existing.id);
-        if (error) {
-          console.error("[Settings] Erro ao atualizar site_settings:", error);
-          setError(error.message || String(error));
-          return { success: false, message: error.message || "Erro ao atualizar configurações" };
-        }
+        if (error) throw error;
       } else {
         const { error } = await supabase.from("site_settings").insert(payload);
-        if (error) {
-          console.error("[Settings] Erro ao inserir site_settings:", error);
-          setError(error.message || String(error));
-          return { success: false, message: error.message || "Erro ao inserir configurações" };
-        }
+        if (error) throw error;
       }
 
       console.log("[Settings] Configurações salvas com sucesso!");
 
-      // Recarregar configurações após salvar
-      await reloadSettings();
+      // Invalida o cache e força um novo fetch garantindo que os dados em tela estejam 100% atualizados
+      await queryClient.invalidateQueries({ queryKey: ["siteSettings"] });
       return { success: true };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Erro desconhecido";
       console.error("[Settings] Exceção ao salvar configurações:", err);
-      setError(errorMessage);
       return { success: false, message: errorMessage };
     }
-  }, [reloadSettings]);
+  }, [queryClient]);
 
   const value: SettingsContextType = {
     settings,
