@@ -52,12 +52,36 @@ const solutions = [
 ];
 
 const authorityCards = [
-  { title: "Growth Marketing", icon: LineChart },
-  { title: "Social Ads (Meta & TikTok)", icon: Radar },
-  { title: "Criativos de Performance", icon: Sparkles },
-  { title: "Automação e Sistemas", icon: Bot },
-  { title: "Captação e Reativação", icon: MessagesSquare },
-  { title: "Estrutura Comercial", icon: BarChart3 },
+  { 
+    title: "Growth Marketing", 
+    description: "Estratégia orientada a crescimento, eficiência e escala.",
+    icon: LineChart 
+  },
+  { 
+    title: "Social Ads (Meta & TikTok)", 
+    description: "Campanhas pensadas para gerar atenção, clique e resultado.",
+    icon: Radar 
+  },
+  { 
+    title: "Criativos de Performance", 
+    description: "Peças criadas para parar o scroll e sustentar CTR.",
+    icon: Sparkles 
+  },
+  { 
+    title: "Automação e Sistemas", 
+    description: "Mais controle, velocidade e inteligência na operação.",
+    icon: Bot 
+  },
+  { 
+    title: "Captação e Reativação", 
+    description: "Estruturas para atrair, recuperar e aproveitar melhor cada oportunidade.",
+    icon: MessagesSquare 
+  },
+  { 
+    title: "Estrutura Comercial", 
+    description: "Processos mais organizados para transformar demanda em venda.",
+    icon: BarChart3 
+  },
 ];
 
 const painPoints = [
@@ -511,13 +535,21 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {authorityCards.map(({ title, icon: Icon }) => (
-                <article key={title} className="rounded-lg border border-border/70 bg-card/60 p-6 transition-transform duration-200 hover:-translate-y-1">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-md border border-border/70 bg-secondary/40">
-                    <Icon className="h-5 w-5 text-primary" />
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {authorityCards.map(({ title, description, icon: Icon }) => (
+                <article 
+                  key={title} 
+                  className="group relative rounded-xl border border-border/40 bg-gradient-to-b from-card/80 to-card/40 p-8 backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] hover:shadow-primary/5"
+                >
+                  <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-border/60 bg-gradient-to-br from-secondary/50 to-background/50 shadow-inner transition-colors duration-300 group-hover:border-primary/40 group-hover:bg-secondary/60">
+                    <Icon className="h-7 w-7 text-primary transition-transform duration-300 group-hover:scale-110" />
                   </div>
-                  <h3 className="mt-5 text-xl font-semibold">{title}</h3>
+                  <div className="mt-6 space-y-3">
+                    <h3 className="text-xl font-bold tracking-tight text-foreground transition-colors duration-300 group-hover:text-primary">{title}</h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {description}
+                    </p>
+                  </div>
                 </article>
               ))}
             </div>
@@ -555,14 +587,21 @@ const Index = () => {
               <h2 className="text-3xl font-semibold sm:text-4xl">Soluções para destravar crescimento com inteligência operacional</h2>
             </div>
 
-            <div className="mt-10 grid gap-4 lg:grid-cols-3">
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {solutionCards.map(({ title, description, icon: Icon }) => (
-                <article key={title} className="rounded-lg border border-border/70 bg-card/60 p-6">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-md border border-border/70 bg-secondary/40">
-                    <Icon className="h-5 w-5 text-primary" />
+                <article 
+                  key={title} 
+                  className="group relative rounded-xl border border-border/40 bg-gradient-to-b from-card/80 to-card/40 p-8 backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] hover:shadow-primary/5"
+                >
+                  <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-border/60 bg-gradient-to-br from-secondary/50 to-background/50 shadow-inner transition-colors duration-300 group-hover:border-primary/40 group-hover:bg-secondary/60">
+                    <Icon className="h-7 w-7 text-primary transition-transform duration-300 group-hover:scale-110" />
                   </div>
-                  <h3 className="mt-5 text-xl font-semibold">{title}</h3>
-                  <p className="mt-3 leading-7 text-muted-foreground">{description}</p>
+                  <div className="mt-6 space-y-3">
+                    <h3 className="text-xl font-bold tracking-tight text-foreground transition-colors duration-300 group-hover:text-primary">{title}</h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {description}
+                    </p>
+                  </div>
                 </article>
               ))}
             </div>
