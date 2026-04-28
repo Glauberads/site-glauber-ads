@@ -63,19 +63,19 @@ const authorityCards = [
 const painPoints = [
   {
     title: "Tráfego sem estrutura",
-    description: "Mais volume entrando em um processo que não converte direito.",
+    description: "Tráfego sem estrutura desperdiça orçamento. Mais volume entrando em um processo que não converte direito.",
   },
   {
     title: "Criativos sem força",
-    description: "Campanhas rodam, mas não geram clique com consistência.",
+    description: "Criativos mornos derrubam eficiência. Campanhas rodam, mas não sustentam resultado nem geram clique com consistência.",
   },
   {
     title: "Base esfriando",
-    description: "O lead entra e perde valor porque a operação não reage no tempo certo.",
+    description: "Leads esfriam quando a operação responde tarde. O lead entra e perde valor porque não há velocidade no atendimento.",
   },
   {
     title: "Comercial desalinhado",
-    description: "O time recebe contato, mas sem contexto, sem priorização e sem inteligência.",
+    description: "Marketing isolado não escala operação. O time recebe contato sem contexto, sem priorização e sem inteligência comercial.",
   },
 ];
 
@@ -393,7 +393,7 @@ const Index = () => {
             </div>
           </div>
           <Button onClick={() => openModal("Header")} className="gap-2" aria-label="Abrir formulário de contato">
-            Falar com especialista
+            Diagnosticar operação
             <ArrowRight />
           </Button>
         </div>
@@ -423,23 +423,23 @@ const Index = () => {
 
               <div className="space-y-5">
                 <h1 className="max-w-4xl text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
-                  Transformamos atenção em vendas com estratégia, tecnologia e performance.
+                  Atrair leads não basta. Sua operação precisa converter com contexto, velocidade e estrutura.
                 </h1>
                 <p className="max-w-3xl text-lg leading-8 text-muted-foreground">
-                  A Glauber Ads une tráfego, criativos, automação e inteligência comercial para construir operações mais eficientes, previsíveis e escaláveis.
+                  A Glauber Ads conecta tráfego, criativo, automação e inteligência comercial para reduzir desperdício e escalar resultado com mais controle.
                 </p>
                 <p className="max-w-3xl text-base leading-7 text-muted-foreground">
-                  Se você quer mais do que campanha bonita e precisa de estrutura para captar, converter e crescer, aqui é onde a operação começa a ficar séria.
+                  Descubra onde sua operação está perdendo eficiência e qual é o próximo passo para crescer com mais controle.
                 </p>
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row">
-                <Button size="lg" className="gap-2" onClick={() => openModal("Hero - Especialista")}>
-                  Quero falar com um especialista
+                <Button size="lg" className="gap-2" onClick={() => openModal("Hero - Diagnóstico")}>
+                  Quero diagnosticar minha operação
                   <ArrowRight />
                 </Button>
-                <Button size="lg" variant="outline" className="gap-2" onClick={() => openModal("Hero - Diagnóstico")}>
-                  Quero diagnosticar minha operação
+                <Button size="lg" variant="outline" className="gap-2" onClick={() => openModal("Hero - Especialista")}>
+                  Quero falar com um especialista
                   <ChevronRight />
                 </Button>
               </div>
@@ -563,8 +563,8 @@ const Index = () => {
             </div>
 
             <div className="mt-10">
-              <Button size="lg" onClick={() => openModal("Soluções")} className="gap-2">
-                Quero entender a melhor solução para minha operação
+              <Button size="lg" onClick={() => openModal("Soluções - Diagnóstico")} className="gap-2">
+                Quero diagnosticar minha operação
                 <ArrowRight />
               </Button>
             </div>
@@ -609,44 +609,86 @@ const Index = () => {
 
         <section className="border-b border-border/60 py-20">
           <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
-            <p className="text-sm font-medium text-primary">Captura</p>
+            <p className="text-sm font-medium text-primary">Diagnóstico</p>
             <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">
-              Se você quer crescer com mais controle, o próximo passo é conversar com a estratégia certa.
+              Se você quer crescer com mais controle, o próximo passo é descobrir onde sua operação está travando resultado.
             </h2>
             <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
-              Antes de abrir a conversa no WhatsApp, queremos entender rapidamente sua necessidade para direcionar você da forma certa.
+              Antes de abrir a conversa no WhatsApp, queremos entender rapidamente sua necessidade para direcionar você com mais precisão.
             </p>
-            <div className="mt-8">
-              <Button size="lg" onClick={() => openModal("Captura")} className="gap-2">
-                Falar com um especialista agora
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <Button size="lg" onClick={() => openModal("Captura - Diagnóstico")} className="gap-2">
+                Quero diagnosticar minha operação
                 <ArrowRight />
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => openModal("Captura - Especialista")} className="gap-2">
+                Quero falar com um especialista
               </Button>
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
-              Atendimento mais rápido, mais direcionado e com mais contexto sobre o que sua operação precisa.
+              Atendimento mais rápido, mais direcionado e com mais contexto sobre o que sua operação realmente precisa.
             </p>
+          </div>
+        </section>
+
+        <section className="border-b border-border/60 py-20 bg-secondary/10">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="max-w-3xl space-y-4">
+              <p className="text-sm font-medium text-primary">Resultados</p>
+              <h2 className="text-3xl font-semibold sm:text-4xl">
+                Quando marketing e operação trabalham juntos, o crescimento deixa de depender de improviso.
+              </h2>
+            </div>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-lg border border-border/70 bg-card/60 p-6 text-center shadow-sm">
+                <p className="text-lg font-semibold text-foreground">Mais velocidade</p>
+                <p className="mt-2 text-sm text-muted-foreground">na resposta ao lead</p>
+              </div>
+              <div className="rounded-lg border border-border/70 bg-card/60 p-6 text-center shadow-sm">
+                <p className="text-lg font-semibold text-foreground">Mais contexto</p>
+                <p className="mt-2 text-sm text-muted-foreground">no atendimento comercial</p>
+              </div>
+              <div className="rounded-lg border border-border/70 bg-card/60 p-6 text-center shadow-sm">
+                <p className="text-lg font-semibold text-foreground">Menos desperdício</p>
+                <p className="mt-2 text-sm text-muted-foreground">nas etapas do funil</p>
+              </div>
+              <div className="rounded-lg border border-border/70 bg-card/60 p-6 text-center shadow-sm">
+                <p className="text-lg font-semibold text-foreground">Mais controle</p>
+                <p className="mt-2 text-sm text-muted-foreground">para escalar com eficiência</p>
+              </div>
+            </div>
+            
+            {/* Espaço preparado para depoimentos ou prints de resultado futuros */}
+            <div className="mt-12 hidden">
+              <div className="rounded-xl border border-border/70 bg-card/40 p-8 text-center">
+                <p className="text-sm text-muted-foreground">[Espaço reservado para Mini Case ou Depoimento]</p>
+              </div>
+            </div>
           </div>
         </section>
 
         <section className="py-20 fechamento-section dark">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 grid-lines relative">
             <div className="rounded-xl fechamento-card px-8 py-16 text-center shadow-2xl">
-              <p className="text-base font-bold uppercase tracking-widest fechamento-accent mb-2">Fechamento</p>
-              <h2 className="mt-4 text-4xl font-extrabold sm:text-5xl text-white drop-shadow-lg">
+              <p className="text-base font-bold uppercase tracking-widest fechamento-accent mb-2">Próximo Passo</p>
+              <h2 className="mt-4 text-4xl font-extrabold sm:text-5xl text-white drop-shadow-lg leading-tight">
                 Sua operação não precisa só de mais alcance.<br />
-                <span className="text-[hsl(var(--accent-orange))] text-glow-orange">Precisa de mais inteligência</span> para transformar atenção em venda.
+                <span className="text-[hsl(var(--accent-orange))] text-glow-orange">Precisa de estrutura</span> para transformar atenção em oportunidade e oportunidade em venda.
               </h2>
               <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-gray-300">
-                Se tráfego, criativo, automação e atendimento não trabalham juntos, o crescimento vira desperdício disfarçado.
+                Quando tráfego, criativo, automação e atendimento não trabalham juntos, parte do crescimento se perde no caminho.
               </p>
-              <div className="mt-10 flex justify-center">
-                <Button size="lg" onClick={() => openModal("Fechamento")} className="gap-2 fechamento-btn-glow text-lg px-8 py-4 font-semibold">
-                  Quero falar com um especialista
+              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                <Button size="lg" onClick={() => openModal("Fechamento - Diagnóstico")} className="gap-2 fechamento-btn-glow text-lg px-8 py-4 font-semibold">
+                  Quero diagnosticar minha operação
                   <ArrowRight />
+                </Button>
+                <Button size="lg" variant="outline" onClick={() => openModal("Fechamento - Especialista")} className="gap-2 text-lg px-8 py-4 font-semibold border-white/20 text-white hover:bg-white/10 hover:text-white">
+                  Quero falar com um especialista
                 </Button>
               </div>
               <p className="mt-6 text-base text-gray-400">
-                Abra a conversa com contexto e receba um direcionamento mais estratégico para sua necessidade.
+                Abra a conversa com mais contexto e receba um direcionamento estratégico para destravar sua operação.
               </p>
             </div>
           </div>
