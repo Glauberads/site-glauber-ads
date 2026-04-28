@@ -365,11 +365,9 @@ const Index = () => {
               alt="Logo da Glauber Ads"
               className="h-12 w-12 object-contain"
               loading="eager"
-              onError={(e) => {
-                const target = e.currentTarget as HTMLImageElement;
-                if (!target.dataset.failed) {
-                  target.dataset.failed = 'true';
-                  target.src = logo;
+              onError={() => {
+                if (logoUrl !== logo) {
+                  setLogoUrl(logo);
                 }
               }}
             />

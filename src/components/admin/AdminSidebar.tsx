@@ -63,11 +63,9 @@ export const AdminSidebar = () => {
               src={sidebarLogoUrl}
               alt="Glauber Ads"
               className="h-8 w-8 object-contain"
-              onError={(e) => {
-                const target = e.currentTarget as HTMLImageElement;
-                if (!target.dataset.failed) {
-                  target.dataset.failed = 'true';
-                  target.src = logoImg;
+              onError={() => {
+                if (sidebarLogoUrl !== logoImg) {
+                  setSidebarLogoUrl(logoImg);
                 }
               }}
             />
