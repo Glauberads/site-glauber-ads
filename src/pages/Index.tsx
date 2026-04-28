@@ -394,10 +394,15 @@ const Index = () => {
               </div>
 
               <img
-                src={logo}
+                src={logoUrl}
                 alt="Identidade visual da Glauber Ads"
                 className="h-24 w-auto object-contain sm:h-28"
                 loading="eager"
+                onError={() => {
+                  if (logoUrl !== logo) {
+                    setLogoUrl(logo);
+                  }
+                }}
               />
 
               <div className="space-y-5">
