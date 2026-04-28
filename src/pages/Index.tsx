@@ -131,6 +131,8 @@ const Index = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [maxScroll, setMaxScroll] = useState(0);
+  const [startTime] = useState(Date.now());
 
   const normalizeStoragePath = (path: string) => {
     return path.replace(/^\/+/g, "").replace(/^site-assets\//, "").replace(/^\/site-assets\//, "");
@@ -174,6 +176,20 @@ const Index = () => {
   // Apply dashboard colors to the public homepage
   useEffect(() => {
     document.documentElement.classList.add("admin-theme", "dark");
+  }, []);
+
+  // Monitora a porcentagem máxima de scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight > 0) {
+        const scrollPercent = Math.round((scrollTop / docHeight) * 100);
+        setMaxScroll((prev) => Math.max(prev, scrollPercent));
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Carregar dados salvos do localStorage ao abrir modal
@@ -310,7 +326,7 @@ const Index = () => {
       // Registrar tentativa de envio bem-sucedida
       recordAttempt();
 
-      // Analytics
+      // Analytics Google
       const analyticsWindow = window as Window & { dataLayer?: unknown[] };
       if (Array.isArray(analyticsWindow.dataLayer)) {
         analyticsWindow.dataLayer.push({
@@ -318,6 +334,19 @@ const Index = () => {
           cta_context: ctaContext,
           solution: form.solution,
         });
+      }
+
+      // Analytics Meta Pixel (Lead)
+      const fbWindow = window as Window & { fbq?: any };
+      if (typeof fbWindow.fbq === "function") {
+        const timeOnPage = Math.round((Date.now() - startTime) / 1000);
+        fbWindow.fbq("track", "Lead", {
+          scroll_depth: maxScroll + "%",
+          seconds_on_page: timeOnPage + "s",
+          button_location: ctaContext,
+          solution: form.solution
+        });
+        console.log(`[Pixel] Lead disparado: ${maxScroll}% de scroll, ${timeOnPage}s na página. Origem: ${ctaContext}`);
       }
 
       // Toast de sucesso
