@@ -716,17 +716,15 @@ const Index = () => {
           <DialogHeader>
             <DialogTitle className="text-2xl">Antes de abrir a conversa, me diga onde podemos te ajudar melhor.</DialogTitle>
             <DialogDescription className="text-base leading-7">
-              Preencha seus dados para seguir para o WhatsApp com atendimento mais rápido e direcionado.
+              Preencha os dados abaixo para continuar no WhatsApp com atendimento mais rápido e direcionado.
             </DialogDescription>
           </DialogHeader>
 
-          <form className="space-y-5" onSubmit={handleSubmit} noValidate>
-            <div className="rounded-md border border-border/70 bg-secondary/30 px-4 py-3 text-sm text-muted-foreground">
-              Origem do CTA: <span className="font-medium text-foreground">{ctaContext}</span>
-            </div>
+          <form className="space-y-4 sm:space-y-5 mt-2" onSubmit={handleSubmit} noValidate>
+            <input type="hidden" name="ctaContext" value={ctaContext} />
 
-            <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium">Nome</label>
+            <div className="space-y-1.5">
+              <label htmlFor="name" className="text-sm font-medium text-foreground/90">Nome</label>
               <Input
                 id="name"
                 value={form.name}
@@ -734,12 +732,13 @@ const Index = () => {
                 placeholder="Seu nome"
                 maxLength={100}
                 aria-invalid={!!errors.name}
+                className="h-11 sm:h-10 bg-background/50"
               />
-              {errors.name ? <p className="text-sm text-destructive">{errors.name}</p> : null}
+              {errors.name ? <p className="text-xs text-destructive">{errors.name}</p> : null}
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">Email</label>
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="text-sm font-medium text-foreground/90">Email</label>
               <Input
                 id="email"
                 type="email"
@@ -748,12 +747,13 @@ const Index = () => {
                 placeholder="seu@email.com"
                 maxLength={100}
                 aria-invalid={!!errors.email}
+                className="h-11 sm:h-10 bg-background/50"
               />
-              {errors.email ? <p className="text-sm text-destructive">{errors.email}</p> : null}
+              {errors.email ? <p className="text-xs text-destructive">{errors.email}</p> : null}
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="whatsapp" className="text-sm font-medium">WhatsApp</label>
+            <div className="space-y-1.5">
+              <label htmlFor="whatsapp" className="text-sm font-medium text-foreground/90">WhatsApp</label>
               <Input
                 id="whatsapp"
                 value={form.whatsapp}
@@ -762,19 +762,20 @@ const Index = () => {
                 inputMode="tel"
                 maxLength={20}
                 aria-invalid={!!errors.whatsapp}
+                className="h-11 sm:h-10 bg-background/50"
               />
-              {errors.whatsapp ? <p className="text-sm text-destructive">{errors.whatsapp}</p> : null}
+              {errors.whatsapp ? <p className="text-xs text-destructive">{errors.whatsapp}</p> : null}
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="solution" className="text-sm font-medium">Qual solução você está buscando?</label>
+            <div className="space-y-1.5">
+              <label htmlFor="solution" className="text-sm font-medium text-foreground/90">Qual solução você está buscando?</label>
               <select
                 id="solution"
                 value={form.solution}
                 onChange={(event) => updateField("solution", event.target.value)}
                 aria-invalid={!!errors.solution}
                 className={cn(
-                  "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                  "flex h-11 sm:h-10 w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
                   errors.solution ? "border-destructive" : "",
                 )}
               >
@@ -785,37 +786,38 @@ const Index = () => {
                   </option>
                 ))}
               </select>
-              {errors.solution ? <p className="text-sm text-destructive">{errors.solution}</p> : null}
+              {errors.solution ? <p className="text-xs text-destructive">{errors.solution}</p> : null}
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="details" className="text-sm font-medium">Descrição breve da sua necessidade</label>
+            <div className="space-y-1.5">
+              <label htmlFor="details" className="text-sm font-medium text-foreground/90">Descrição breve da sua necessidade</label>
               <textarea
                 id="details"
                 value={form.details}
                 onChange={(event) => updateField("details", event.target.value)}
-                placeholder="Conte rapidamente o momento da sua operação"
+                placeholder="Descreva rapidamente o que você precisa"
                 maxLength={280}
-                rows={5}
+                rows={3}
                 aria-invalid={!!errors.details}
                 className={cn(
-                  "flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                  "flex min-h-[80px] w-full rounded-md border border-input bg-background/50 px-3 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
                   errors.details ? "border-destructive" : "",
                 )}
               />
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>Seus dados serão usados apenas para agilizar seu atendimento.</span>
+              <div className="flex items-center justify-end text-[11px] text-muted-foreground mt-1">
                 <span>{form.details.length}/280</span>
               </div>
-              {errors.details ? <p className="text-sm text-destructive">{errors.details}</p> : null}
+              {errors.details ? <p className="text-xs text-destructive">{errors.details}</p> : null}
             </div>
 
             {submitError ? <p className="text-sm text-destructive">{submitError}</p> : null}
 
-            <Button type="submit" size="lg" className="w-full gap-2" disabled={isSubmitting}>
-              {isSubmitting ? "Salvando lead..." : "Continuar para o WhatsApp"}
-              <ArrowRight />
-            </Button>
+            <div className="pt-2">
+              <Button type="submit" size="lg" className="w-full gap-2 h-14 text-base font-semibold fechamento-btn-glow" disabled={isSubmitting}>
+                {isSubmitting ? "Salvando lead..." : "Continuar para o WhatsApp"}
+                <ArrowRight className="h-5 w-5" />
+              </Button>
+            </div>
           </form>
         </DialogContent>
       </Dialog>
