@@ -35,7 +35,6 @@ import { useSettings } from "@/contexts/SettingsContext";
 
 type FormState = {
   name: string;
-  email: string;
   whatsapp: string;
   solution: string;
   details: string;
@@ -116,7 +115,6 @@ const stats = [
 
 const initialState: FormState = {
   name: "",
-  email: "",
   whatsapp: "",
   solution: "",
   details: "",
@@ -190,7 +188,6 @@ const Index = () => {
           setForm((prev) => ({
             ...prev,
             name: draft.name || "",
-            email: draft.email || "",
             whatsapp: draft.whatsapp || "",
             details: draft.details || "",
           }));
@@ -207,7 +204,6 @@ const Index = () => {
       "glauber_form_draft",
       JSON.stringify({
         name: updatedForm.name,
-        email: updatedForm.email,
         whatsapp: updatedForm.whatsapp,
         details: updatedForm.details,
       })
@@ -244,10 +240,6 @@ const Index = () => {
       nextErrors.name = "Nome muito longo (máx. 100 caracteres).";
     }
 
-    // Validar email
-    const emailError = validateEmail(form.email);
-    if (emailError) {
-      nextErrors.email = emailError;
     }
 
     // Validar WhatsApp
@@ -286,7 +278,6 @@ const Index = () => {
     }
 
     const cleanName = form.name.trim();
-    const cleanEmail = form.email.trim();
     const cleanWhatsapp = cleanWhatsApp(form.whatsapp);
     const cleanDetails = form.details.trim();
     const params = new URLSearchParams(window.location.search);
@@ -297,7 +288,6 @@ const Index = () => {
     try {
       const { error } = await supabase.from("leads").insert({
         nome: cleanName,
-        email: cleanEmail,
         whatsapp: cleanWhatsapp,
         solucao_interesse: form.solution,
         descricao_necessidade: cleanDetails || null,
@@ -712,15 +702,15 @@ const Index = () => {
       </main>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="border-border/70 bg-card/95 sm:max-w-xl">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">Antes de abrir a conversa, me diga onde podemos te ajudar melhor.</DialogTitle>
-            <DialogDescription className="text-base leading-7">
-              Preencha os dados abaixo para continuar no WhatsApp com atendimento mais rápido e direcionado.
+        <DialogContent className="border-border/70 bg-card/95 sm:max-w-md p-5 sm:p-6">
+          <DialogHeader className="space-y-1">
+            <DialogTitle className="text-xl sm:text-2xl">Antes de continuar, preencha seus dados.</DialogTitle>
+            <DialogDescription className="text-sm sm:text-base leading-snug">
+              Preencha os dados para continuar no WhatsApp.
             </DialogDescription>
           </DialogHeader>
 
-          <form className="space-y-4 sm:space-y-5 mt-2" onSubmit={handleSubmit} noValidate>
+          <form className="space-y-3 sm:space-y-4 mt-1" onSubmit={handleSubmit} noValidate>
             <input type="hidden" name="ctaContext" value={ctaContext} />
 
             <div className="space-y-1.5">
@@ -737,20 +727,7 @@ const Index = () => {
               {errors.name ? <p className="text-xs text-destructive">{errors.name}</p> : null}
             </div>
 
-            <div className="space-y-1.5">
-              <label htmlFor="email" className="text-sm font-medium text-foreground/90">Email</label>
-              <Input
-                id="email"
-                type="email"
-                value={form.email}
-                onChange={(event) => updateField("email", event.target.value)}
-                placeholder="seu@email.com"
-                maxLength={100}
-                aria-invalid={!!errors.email}
-                className="h-11 sm:h-10 bg-background/50"
-              />
-              {errors.email ? <p className="text-xs text-destructive">{errors.email}</p> : null}
-            </div>
+
 
             <div className="space-y-1.5">
               <label htmlFor="whatsapp" className="text-sm font-medium text-foreground/90">WhatsApp</label>
@@ -790,21 +767,21 @@ const Index = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="details" className="text-sm font-medium text-foreground/90">Descrição breve da sua necessidade</label>
+              <label htmlFor="details" className="text-sm font-medium text-foreground/90">Descrição breve da sua necessidade <span className="font-normal text-muted-foreground">(opcional)</span></label>
               <textarea
                 id="details"
                 value={form.details}
                 onChange={(event) => updateField("details", event.target.value)}
                 placeholder="Descreva rapidamente o que você precisa"
                 maxLength={280}
-                rows={3}
+                rows={2}
                 aria-invalid={!!errors.details}
                 className={cn(
-                  "flex min-h-[80px] w-full rounded-md border border-input bg-background/50 px-3 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                  "flex min-h-[60px] w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
                   errors.details ? "border-destructive" : "",
                 )}
               />
-              <div className="flex items-center justify-end text-[11px] text-muted-foreground mt-1">
+              <div className="flex items-center justify-end text-[10px] text-muted-foreground">
                 <span>{form.details.length}/280</span>
               </div>
               {errors.details ? <p className="text-xs text-destructive">{errors.details}</p> : null}
@@ -812,8 +789,8 @@ const Index = () => {
 
             {submitError ? <p className="text-sm text-destructive">{submitError}</p> : null}
 
-            <div className="pt-2">
-              <Button type="submit" size="lg" className="w-full gap-2 h-14 text-base font-semibold fechamento-btn-glow" disabled={isSubmitting}>
+            <div className="pt-1">
+              <Button type="submit" size="lg" className="w-full gap-2 h-12 sm:h-14 text-base font-semibold fechamento-btn-glow" disabled={isSubmitting}>
                 {isSubmitting ? "Salvando lead..." : "Continuar para o WhatsApp"}
                 <ArrowRight className="h-5 w-5" />
               </Button>
