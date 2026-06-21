@@ -61,8 +61,8 @@ const AIQuickResponses = () => {
       const lower = searchTerm.toLowerCase();
       filtered = responses.filter(
         (r) =>
-          r.title.toLowerCase().includes(lower) ||
-          r.keywords.some(k => k.toLowerCase().includes(lower))
+          r.title?.toLowerCase().includes(lower) ||
+          (r.keywords || []).some(k => k?.toLowerCase().includes(lower))
       );
     }
     setFilteredResponses(filtered);
@@ -103,9 +103,9 @@ const AIQuickResponses = () => {
 
   const openEditModal = (item: AIQuickResponse) => {
     setFormId(item.id);
-    setFormTitle(item.title);
-    setFormKeywords(item.keywords.join("\n"));
-    setFormResponse(item.response);
+    setFormTitle(item.title || "");
+    setFormKeywords((item.keywords || []).join("\n"));
+    setFormResponse(item.response || "");
     setFormPriority(item.priority);
     setFormIsActive(item.is_active);
     setIsModalOpen(true);
@@ -271,14 +271,14 @@ const AIQuickResponses = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1 max-w-[300px]">
-                        {item.keywords.slice(0, 3).map((kw, i) => (
+                        {(item.keywords || []).slice(0, 3).map((kw, i) => (
                           <Badge key={i} variant="secondary" className="text-[10px]">
                             {kw}
                           </Badge>
                         ))}
-                        {item.keywords.length > 3 && (
+                        {(item.keywords || []).length > 3 && (
                           <Badge variant="outline" className="text-[10px]">
-                            +{item.keywords.length - 3}
+                            +{(item.keywords || []).length - 3}
                           </Badge>
                         )}
                       </div>
