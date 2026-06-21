@@ -42,10 +42,10 @@ const App = () => (
                       <Route index element={<Dashboard />} />
                       <Route path="leads" element={<Leads />} />
                       <Route path="integrations" element={<Integrations />} />
-                      <Route path="/admin/marketing" element={<Marketing />} />
-                      <Route path="/admin/personalizacao" element={<Personalization />} />
-                      <Route path="/admin/ai-chats" element={<AIChatLeads />} />
-                      <Route path="/admin/ai-quick-responses" element={<AIQuickResponses />} />
+                      <Route path="marketing" element={<Marketing />} />
+                      <Route path="personalizacao" element={<Personalization />} />
+                      <Route path="ai-chats" element={<AIChatLeads />} />
+                      <Route path="ai-quick-responses" element={<AIQuickResponses />} />
                     </Route>
                   </Routes>
                 </Suspense>
