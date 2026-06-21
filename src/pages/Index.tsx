@@ -39,6 +39,7 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { MarketingScripts } from "@/components/MarketingScripts";
+import { AIChatWidget } from "@/components/AIChatWidget";
 import { useToast } from "@/components/ui/use-toast";
 import { cleanWhatsApp, validateWhatsApp, formatWhatsAppForLink } from "@/lib/validation";
 import { checkRateLimit, recordAttempt, getAttemptsRemaining } from "@/lib/rateLimit";
@@ -420,6 +421,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <MarketingScripts />
+      <AIChatWidget />
       <div className="fixed inset-x-0 top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-xl">
         <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:h-20 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 sm:gap-4">

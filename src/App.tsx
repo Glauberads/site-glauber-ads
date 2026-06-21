@@ -18,6 +18,7 @@ const Leads = lazy(() => import("./pages/admin/Leads.tsx"));
 const Integrations = lazy(() => import("./pages/admin/Integrations.tsx"));
 const Marketing = lazy(() => import("./pages/admin/Marketing.tsx"));
 const Personalization = lazy(() => import("./pages/admin/Personalization"));
+const AIChatLeads = lazy(() => import("./pages/admin/AIChatLeads"));
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
                       <Route path="integrations" element={<Integrations />} />
                       <Route path="marketing" element={<Marketing />} />
                       <Route path="personalizacao" element={<Personalization />} />
+                      <Route path="ai-chats" element={<AIChatLeads />} />
                     </Route>
                   </Routes>
                 </Suspense>

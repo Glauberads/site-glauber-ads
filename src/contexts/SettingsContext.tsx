@@ -114,8 +114,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       // Invalida o cache e força um novo fetch garantindo que os dados em tela estejam 100% atualizados
       await queryClient.invalidateQueries({ queryKey: ["siteSettings"] });
       return { success: true };
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Erro desconhecido";
+    } catch (err: any) {
+      const errorMessage = err.message || err.details || "Erro desconhecido";
       console.error("[Settings] Exceção ao salvar configurações:", err);
       return { success: false, message: errorMessage };
     }
