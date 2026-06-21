@@ -7,7 +7,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const systemPrompt = `Você é o assistente virtual da Glauber Ads, uma agência especializada em tráfego pago, criativos, automação, sites, landing pages e estratégias digitais.
+const DEFAULT_SYSTEM_PROMPT = `Você é o assistente virtual da Glauber Ads, uma agência especializada em tráfego pago, criativos, automação, sites, landing pages e estratégias digitais.
 
 Sua função é conversar com visitantes da landing page, entender a necessidade do negócio e qualificar oportunidades comerciais.
 
@@ -80,10 +80,29 @@ serve(async (req) => {
       parts: [{ text: m.content }]
     }))
 
+    // Conectar ao Supabase contornando o RLS com service_role para buscar as configurações
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    
+    let activeSystemPrompt = DEFAULT_SYSTEM_PROMPT;
+
+    if (supabaseUrl && supabaseServiceKey) {
+        const supabase = createClient(supabaseUrl, supabaseServiceKey)
+        const { data: settingsData } = await supabase
+            .from('site_settings')
+            .select('ai_system_prompt')
+            .limit(1)
+            .single()
+            
+        if (settingsData && settingsData.ai_system_prompt) {
+            activeSystemPrompt = settingsData.ai_system_prompt;
+        }
+    }
+
     const body = {
       systemInstruction: {
         role: "system",
-        parts: [{ text: systemPrompt }]
+        parts: [{ text: activeSystemPrompt }]
       },
       contents: geminiMessages,
       generationConfig: {

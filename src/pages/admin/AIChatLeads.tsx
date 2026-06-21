@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-import { Download, Bot, Search, AlertCircle } from "lucide-react";
+import { Download, Bot, Search, AlertCircle, Settings, Loader2, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -41,6 +43,11 @@ const AIChatLeads = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLead, setSelectedLead] = useState<AIChatLead | null>(null);
+
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settingsPrompt, setSettingsPrompt] = useState("");
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+  const [isLoadingSettings, setIsLoadingSettings] = useState(false);
 
   useEffect(() => {
     fetchLeads();
@@ -118,6 +125,45 @@ const AIChatLeads = () => {
     document.body.removeChild(link);
   };
 
+  const handleOpenSettings = async () => {
+    setIsSettingsOpen(true);
+    setIsLoadingSettings(true);
+    try {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("ai_system_prompt")
+        .limit(1)
+        .single();
+      
+      if (!error && data) {
+        setSettingsPrompt(data.ai_system_prompt || "");
+      }
+    } catch (error) {
+      console.error("Erro ao carregar prompt:", error);
+    } finally {
+      setIsLoadingSettings(false);
+    }
+  };
+
+  const savePromptSettings = async () => {
+    setIsSavingSettings(true);
+    try {
+      const { error } = await supabase
+        .from("site_settings")
+        .update({ ai_system_prompt: settingsPrompt })
+        .not("id", "is", null);
+        
+      if (error) throw error;
+      toast.success("Comportamento da IA salvo com sucesso!");
+      setIsSettingsOpen(false);
+    } catch (error) {
+      console.error("Erro ao salvar prompt:", error);
+      toast.error("Ocorreu um erro ao salvar as configurações.");
+    } finally {
+      setIsSavingSettings(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -127,10 +173,16 @@ const AIChatLeads = () => {
             Leads qualificados automaticamente pelo SDR Digital (Gemini).
           </p>
         </div>
-        <Button onClick={downloadCSV} variant="outline" className="gap-2">
-          <Download className="h-4 w-4" />
-          Exportar CSV
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={handleOpenSettings} variant="default" className="gap-2 bg-indigo-600 hover:bg-indigo-700">
+            <Settings className="h-4 w-4" />
+            Configurar Agente
+          </Button>
+          <Button onClick={downloadCSV} variant="outline" className="gap-2">
+            <Download className="h-4 w-4" />
+            Exportar CSV
+          </Button>
+        </div>
       </div>
 
       <div className="flex items-center gap-2 rounded-lg border border-border/50 bg-card p-2 shadow-sm max-w-sm">
@@ -272,6 +324,59 @@ const AIChatLeads = () => {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+        <DialogContent className="sm:max-w-[700px] max-h-[90vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5 text-indigo-500" />
+              Configurar Comportamento do Agente (Prompt)
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-y-auto space-y-4 py-4 pr-2">
+            <div className="rounded-md border border-amber-500/50 bg-amber-500/10 p-4 text-sm text-amber-600/90 dark:text-amber-400">
+              <p className="font-semibold mb-1">Atenção!</p>
+              <p>
+                Este texto define as regras, tom de voz e como o agente responde aos clientes.
+                Se você apagar tudo, o sistema voltará a utilizar as regras padrão de fábrica. 
+                Sempre mantenha a instrução sobre a emissão do bloco JSON no final, ou o Agente não conseguirá salvar os leads!
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">System Prompt (Regras de IA)</label>
+              {isLoadingSettings ? (
+                <div className="flex items-center justify-center h-64 border rounded-md border-dashed">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : (
+                <Textarea 
+                  className="min-h-[400px] font-mono text-xs leading-relaxed resize-y"
+                  placeholder="Escreva as regras e o roteiro do vendedor aqui..."
+                  value={settingsPrompt}
+                  onChange={(e) => setSettingsPrompt(e.target.value)}
+                />
+              )}
+            </div>
+          </div>
+          
+          <div className="flex justify-end pt-2 border-t">
+            <Button 
+              onClick={savePromptSettings} 
+              disabled={isLoadingSettings || isSavingSettings}
+              className="gap-2 min-w-[120px]"
+            >
+              {isSavingSettings ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              {isSavingSettings ? "Salvando..." : "Salvar Configurações"}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
