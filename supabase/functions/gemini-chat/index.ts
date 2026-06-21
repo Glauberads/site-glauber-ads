@@ -163,9 +163,28 @@ serve(async (req) => {
                     })
                     
                     if (error) {
-                        console.error("Erro ao salvar lead de IA no banco:", error)
+                        console.error("Erro ao salvar lead de IA no banco ai_chat_leads:", error)
                     } else {
                         console.log("Lead SDR salvo com sucesso:", actionData.name)
+                        
+                        // Salvar simultaneamente na tabela principal 'leads' caso tenha nome e telefone
+                        if (actionData.name && actionData.whatsapp) {
+                            const { error: leadsError } = await supabase.from('leads').insert({
+                                nome: actionData.name,
+                                whatsapp: actionData.whatsapp,
+                                solucao_interesse: actionData.business_type || 'Agente IA SDR',
+                                descricao_necessidade: actionData.pain_point || actionData.conversation_summary || 'Lead gerado via Inteligência Artificial.',
+                                utm_source: utms?.utm_source || 'AI_Agent',
+                                utm_medium: utms?.utm_medium || null,
+                                utm_campaign: utms?.utm_campaign || null,
+                            });
+                            
+                            if (leadsError) {
+                                console.error("Erro ao salvar lead na tabela principal (leads):", leadsError);
+                            } else {
+                                console.log("Lead SDR também adicionado no CRM principal.");
+                            }
+                        }
                     }
                 } else {
                     console.error("Credenciais do Supabase ausentes no env.")
