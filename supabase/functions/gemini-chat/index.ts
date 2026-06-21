@@ -97,6 +97,53 @@ serve(async (req) => {
         if (settingsData && settingsData.ai_system_prompt) {
             activeSystemPrompt = settingsData.ai_system_prompt;
         }
+
+        // Lógica de Respostas Rápidas
+        const lastUserMessage = messages[messages.length - 1]?.content || '';
+        const normalizedMessage = lastUserMessage.toLowerCase();
+
+        const { data: quickResponses } = await supabase
+            .from('ai_quick_responses')
+            .select('id, title, keywords, response')
+            .eq('is_active', true)
+            .order('priority', { ascending: false });
+
+        let matchedQuickResponse = null;
+        if (quickResponses && normalizedMessage) {
+            for (const qr of quickResponses) {
+                const keywords = qr.keywords || [];
+                const hasMatch = keywords.some((kw: string) => 
+                    normalizedMessage.includes(kw.toLowerCase())
+                );
+                if (hasMatch) {
+                    matchedQuickResponse = qr;
+                    break;
+                }
+            }
+        }
+
+        if (matchedQuickResponse) {
+            // Salvar log de Quick Response
+            const { error: logError } = await supabase.from('ai_chat_logs').insert({
+                user_message: lastUserMessage,
+                bot_response: matchedQuickResponse.response,
+                response_source: 'quick_response',
+                matched_quick_response_id: matchedQuickResponse.id,
+                matched_quick_response_title: matchedQuickResponse.title,
+                utm_source: utms?.utm_source || null,
+                utm_medium: utms?.utm_medium || null,
+                utm_campaign: utms?.utm_campaign || null,
+            });
+
+            if (logError) console.error("Erro ao salvar log de quick_response:", logError);
+
+            return new Response(JSON.stringify({ 
+                reply: matchedQuickResponse.response,
+                isQualified: false 
+            }), {
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+        }
     }
 
     const body = {
@@ -193,6 +240,23 @@ serve(async (req) => {
         } catch(e) {
             console.error("Falha ao realizar parse do JSON emitido pela IA:", e);
         }
+    }
+
+    // Salvar log da resposta do Gemini
+    const lastUserMessageGemini = messages[messages.length - 1]?.content || '';
+    const supabaseUrlLogs = Deno.env.get('SUPABASE_URL')
+    const supabaseServiceKeyLogs = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    if (supabaseUrlLogs && supabaseServiceKeyLogs) {
+        const supabaseLogs = createClient(supabaseUrlLogs, supabaseServiceKeyLogs);
+        const { error: logErrorGemini } = await supabaseLogs.from('ai_chat_logs').insert({
+            user_message: lastUserMessageGemini,
+            bot_response: replyText,
+            response_source: 'gemini',
+            utm_source: utms?.utm_source || null,
+            utm_medium: utms?.utm_medium || null,
+            utm_campaign: utms?.utm_campaign || null,
+        });
+        if (logErrorGemini) console.error("Erro ao salvar log do gemini:", logErrorGemini);
     }
 
     // Retorna a resposta para o frontend

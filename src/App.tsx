@@ -19,6 +19,7 @@ const Integrations = lazy(() => import("./pages/admin/Integrations.tsx"));
 const Marketing = lazy(() => import("./pages/admin/Marketing.tsx"));
 const Personalization = lazy(() => import("./pages/admin/Personalization"));
 const AIChatLeads = lazy(() => import("./pages/admin/AIChatLeads"));
+const AIQuickResponses = lazy(() => import("./pages/admin/AIQuickResponses"));
 
 const queryClient = new QueryClient();
 
@@ -41,9 +42,10 @@ const App = () => (
                       <Route index element={<Dashboard />} />
                       <Route path="leads" element={<Leads />} />
                       <Route path="integrations" element={<Integrations />} />
-                      <Route path="marketing" element={<Marketing />} />
-                      <Route path="personalizacao" element={<Personalization />} />
-                      <Route path="ai-chats" element={<AIChatLeads />} />
+                      <Route path="/admin/marketing" element={<Marketing />} />
+                      <Route path="/admin/personalizacao" element={<Personalization />} />
+                      <Route path="/admin/ai-chats" element={<AIChatLeads />} />
+                      <Route path="/admin/ai-quick-responses" element={<AIQuickResponses />} />
                     </Route>
                   </Routes>
                 </Suspense>

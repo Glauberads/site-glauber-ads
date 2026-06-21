@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LayoutDashboard, LogOut, Megaphone, Users, Webhook, Palette, Bot } from "lucide-react";
+import { LayoutDashboard, LogOut, Megaphone, Users, Webhook, Palette, Bot, Zap } from "lucide-react";
 import logoImg from "@/assets/glauber-ads-logo.png";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -23,6 +23,7 @@ const items = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard, end: true },
   { title: "Gestão de Leads", url: "/admin/leads", icon: Users, end: false },
   { title: "Conversas IA", url: "/admin/ai-chats", icon: Bot, end: false },
+  { title: "Respostas Rápidas IA", url: "/admin/ai-quick-responses", icon: Zap, end: false },
   { title: "Integrações", url: "/admin/integrations", icon: Webhook, end: false },
   { title: "Marketing & Tracking", url: "/admin/marketing", icon: Megaphone, end: false },
   { title: "Personalização", url: "/admin/personalizacao", icon: Palette, end: false },
